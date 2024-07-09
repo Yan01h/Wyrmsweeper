@@ -28,12 +28,14 @@
 class Wyrmsweeper final
 {
 public:
-    Wyrmsweeper() = default;
+    Wyrmsweeper();
 
     void run();
 private:
     void initialize();
     void uninitialize();
+private:
+    bool _running;
 };
 
 #endif

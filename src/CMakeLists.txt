@@ -28,6 +28,7 @@ set(
     WS_SOURCE_FILES
     core/wyrmsweeper.h
     core/wyrmsweeper.cpp
+    debug/log.h
     main.cpp
 )
 

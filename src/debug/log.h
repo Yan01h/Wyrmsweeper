@@ -22,39 +22,12 @@
  * SOFTWARE.
  */
 
-#include <exception>
+#ifndef WS_DEBUG_LOG_H
+#define WS_DEBUG_LOG_H
 
-#include "core/wyrmsweeper.h"
-#include "debug/log.h"
-
-auto main(int /*argc*/, char** /*argv*/) -> int
-{
-    try
-    {
-        Wyrmsweeper game;
-        game.run();
-    }
-    catch (const std::exception& err)
-    {
-        SPDLOG_CRITICAL("{}", err.what());
-        return -1;
-    }
-    catch (...)
-    {
-        SPDLOG_CRITICAL("An unknown exception has occurred!");
-        return -2;
-    }
-    return 0;
-}
-
-#if defined(WS_PLATFORM_WINDOWS) && !defined(WS_DEBUG_BUILD)
-#    define WIN32_LEAN_AND_MEAN
-#    include <windows.h>
-
-int WINAPI WinMain(_In_ HINSTANCE /*hInstance*/, _In_opt_ HINSTANCE /*hPrevInstance*/, _In_ LPSTR /*lpCmdLine*/,
-                   _In_ int /*nShowCmd*/)
-{
-    return main(__argc, __argv);
-}
+#ifndef WS_DEBUG_BUILD
+#    define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
+#endif
+#include <spdlog/spdlog.h>
 
 #endif

@@ -24,7 +24,20 @@
 
 #include "wyrmsweeper.h"
 
-void Wyrmsweeper::run() {}
+Wyrmsweeper::Wyrmsweeper()
+    : _running(true)
+{}
+
+void Wyrmsweeper::run()
+{
+    initialize();
+
+    while (_running)
+    {
+    }
+
+    uninitialize();
+}
 
 void Wyrmsweeper::initialize() {}
 
