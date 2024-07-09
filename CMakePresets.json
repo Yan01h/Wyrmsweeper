@@ -1,0 +1,168 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 15,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            }
+        },
+        {
+            "name": "x86",
+            "hidden": true,
+            "architecture": {
+                "value": "x86",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "x64",
+            "hidden": true,
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "windows",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            },
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "external"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                    "enableMicrosoftCodeAnalysis": true,
+                    "enableClangTidyCodeAnalysis": true,
+                    "disableExternalAnalysis": true
+                }
+            }
+        },
+        {
+            "name": "clang",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
+            "name": "gcc",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "x86-windows-msvc-debug",
+            "description": "Build with MSVC for x86 Windows (Debug)",
+            "inherits": [
+                "base",
+                "x86",
+                "windows",
+                "debug"
+            ]
+        },
+        {
+            "name": "x86-windows-msvc-release",
+            "description": "Build with MSVC for x86 Windows (Release)",
+            "inherits": [
+                "base",
+                "x86",
+                "windows",
+                "release"
+            ]
+        },
+        {
+            "name": "x64-windows-msvc-debug",
+            "description": "Build with MSVC for x64 Windows (Debug)",
+            "inherits": [
+                "base",
+                "x64",
+                "windows",
+                "debug"
+            ]
+        },
+        {
+            "name": "x64-windows-msvc-release",
+            "description": "Build with MSVC for x64 Windows (Release)",
+            "inherits": [
+                "base",
+                "x64",
+                "windows",
+                "release"
+            ]
+        },
+        {
+            "name": "x64-clang-debug",
+            "description": "Build with clang/clang++ for x64 (Debug)",
+            "inherits": [
+                "base",
+                "x64",
+                "clang",
+                "debug"
+            ]
+        },
+        {
+            "name": "x64-clang-release",
+            "description": "Build with clang/clang++ for x64 (Release)",
+            "inherits": [
+                "base",
+                "x64",
+                "clang",
+                "release"
+            ]
+        },
+        {
+            "name": "x64-gcc-debug",
+            "description": "Build with gcc/g++ for x64 (Debug)",
+            "inherits": [
+                "base",
+                "x64",
+                "gcc",
+                "debug"
+            ]
+        },
+        {
+            "name": "x64-gcc-release",
+            "description": "Build with gcc/g++ for x64 (Release)",
+            "inherits": [
+                "base",
+                "x64",
+                "gcc",
+                "release"
+            ]
+        }
+    ]
+}

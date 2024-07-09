@@ -1,0 +1,11 @@
+# CMake
+out
+
+# Visual Studio
+.vs
+
+# Visual Studio Code
+.vscode
+
+# CLion
+.idea

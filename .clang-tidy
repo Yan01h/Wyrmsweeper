@@ -1,0 +1,16 @@
+Checks: '
+    bugprone-*,
+    clang-diagnostic-*,
+    clang-analyzer-*,
+    cppcoreguidelines-*,
+    modernize-*,
+    performance-*,
+    portability-*,
+    readability-*,
+    -modernize-use-nullptr,
+    -readability-redundant-access-specifiers
+'
+WarningsAsErrors: 'true'
+FormatStyle: 'file'
+CheckOptions:
+  bugprone-exception-escape.FunctionsThatShouldNotThrow: 'WinMain','main'
