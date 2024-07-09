@@ -24,21 +24,36 @@
 
 #include "wyrmsweeper.h"
 
-Wyrmsweeper::Wyrmsweeper()
-    : _running(true)
-{}
+#include <raylib.h>
+
+const int DEFAULT_SCREEN_WIDHT  = 1280;
+const int DEFAULT_SCREEN_HEIGHT = 720;
 
 void Wyrmsweeper::run()
 {
     initialize();
 
-    while (_running)
+    /*    Main loop    */
+    while (!WindowShouldClose())
     {
+        BeginDrawing();
+        ClearBackground(BLACK);
+        EndDrawing();
     }
 
     uninitialize();
 }
 
-void Wyrmsweeper::initialize() {}
+void Wyrmsweeper::initialize()
+{
+    /*    Init raylib    */
+    InitWindow(DEFAULT_SCREEN_WIDHT, DEFAULT_SCREEN_HEIGHT, "Wyrmsweeper");
+    SetTargetFPS(30);
+    SetExitKey(KEY_F10);
+}
 
-void Wyrmsweeper::uninitialize() {}
+void Wyrmsweeper::uninitialize()
+{
+    /*    Cleanup raylib    */
+    CloseWindow();
+}

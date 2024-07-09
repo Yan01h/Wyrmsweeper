@@ -50,6 +50,25 @@ message(STATUS "Making spdlog available...")
 FetchContent_MakeAvailable(spdlog)
 message(STATUS "Making spdlog available... Done")
 
+# raylib
+option(WS_USE_CUSTOM_RAYLIB "Uses find_package instead of FetchContent for custom raylib implementations" OFF)
+if (WS_USE_CUSTOM_RAYLIB)
+    message(STATUS "Using custom raylib implementation using find_package")
+    find_package(raylib REQUIRED)
+else ()
+    message(STATUS "Using raylib implementation from github using FetchContent")
+    set(BUILD_EXAMPLES OFF CACHE BOOL "")
+    set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "")
+    FetchContent_Declare(
+        raylib
+        GIT_REPOSITORY https://github.com/raysan5/raylib.git
+        GIT_TAG        174313acbfa74d2a45fc0207f47ab00fbdb06050
+    )
+    message(STATUS "Making raylib available...")
+    FetchContent_MakeAvailable(raylib)
+    message(STATUS "Making raylib available... Done")
+endif ()
+
 ####################
 #    Executable    #
 ####################
@@ -75,7 +94,7 @@ endif ()
 target_include_directories(Wyrmsweeper PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/generated)
 
 # Libraries
-target_link_libraries(Wyrmsweeper PRIVATE spdlog)
+target_link_libraries(Wyrmsweeper PRIVATE spdlog raylib)
 
 # Configuration
 configure_file(cmake_config.h.in ${CMAKE_BINARY_DIR}/generated/cmake_config.h)
