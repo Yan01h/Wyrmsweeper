@@ -25,9 +25,18 @@
 #ifndef WS_DEBUG_LOG_H
 #define WS_DEBUG_LOG_H
 
-#ifndef WS_DEBUG_BUILD
-#    define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
+#include <raylib.h>
+
+// NOLINTBEGIN
+#ifdef WS_DEBUG_BUILD
+#    define LOG_INFO(message, ...) TraceLog(LOG_INFO, message, __VA_ARGS__)
+#    define LOG_WARNING(message, ...) TraceLog(LOG_WARNING, message, __VA_ARGS__)
+#    define LOG_ERROR(message, ...) TraceLog(LOG_ERROR, message, __VA_ARGS__)
+#else
+#    define LOG_INFO(message, ...)
+#    define LOG_WARNING(message, ...)
+#    define LOG_ERROR(message, ...)
 #endif
-#include <spdlog/spdlog.h>
+// NOLINTEND
 
 #endif

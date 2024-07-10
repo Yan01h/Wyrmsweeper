@@ -58,6 +58,10 @@ void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
 
 void Wyrmsweeper::initialize()
 {
+#ifndef WS_DEBUG_BUILD
+    SetTraceLogLevel(LOG_NONE);
+#endif
+
     /*    Init raylib    */
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
 

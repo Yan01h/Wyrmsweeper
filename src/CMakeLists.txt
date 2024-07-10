@@ -44,18 +44,6 @@ set(
 
 include(FetchContent)
 
-# spdlog
-set(SPDLOG_BUILD_EXAMPLE OFF CACHE BOOL "")
-set(SPDLOG_INSTALL OFF CACHE BOOL "")
-FetchContent_Declare(
-    spdlog
-    GIT_REPOSITORY https://github.com/gabime/spdlog
-    GIT_TAG        d276069a6e916b1e1fd45885b15b72bd8ee000a7
-)
-message(STATUS "Making spdlog available...")
-FetchContent_MakeAvailable(spdlog)
-message(STATUS "Making spdlog available... Done")
-
 # raylib
 option(WS_USE_CUSTOM_RAYLIB "Uses find_package instead of FetchContent for custom raylib implementations" OFF)
 if (WS_USE_CUSTOM_RAYLIB)
@@ -100,7 +88,7 @@ endif ()
 target_include_directories(Wyrmsweeper PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/generated)
 
 # Libraries
-target_link_libraries(Wyrmsweeper PRIVATE spdlog raylib)
+target_link_libraries(Wyrmsweeper PRIVATE raylib)
 
 # Configuration
 configure_file(cmake_config.h.in ${CMAKE_BINARY_DIR}/generated/cmake_config.h)

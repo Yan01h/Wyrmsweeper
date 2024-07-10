@@ -22,28 +22,12 @@
  * SOFTWARE.
  */
 
-#include <exception>
-
 #include "core/wyrmsweeper.h"
-#include "debug/log.h"
 
 auto main(int /*argc*/, char** /*argv*/) -> int
 {
-    try
-    {
-        Wyrmsweeper game;
-        game.run();
-    }
-    catch (const std::exception& err)
-    {
-        SPDLOG_CRITICAL("{}", err.what());
-        return -1;
-    }
-    catch (...)
-    {
-        SPDLOG_CRITICAL("An unknown exception has occurred!");
-        return -2;
-    }
+    Wyrmsweeper game;
+    game.run();
     return 0;
 }
 
