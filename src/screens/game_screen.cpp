@@ -26,7 +26,7 @@
 
 #include <raylib.h>
 
-#include "core/wyrmsweeper.h"
+#include "wyrmsweeper.h"
 
 GameScreen::GameScreen(Wyrmsweeper* game)
     : Screen(game)

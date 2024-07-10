@@ -26,8 +26,8 @@
 
 #include <raylib.h>
 
-#include "core/wyrmsweeper.h"
 #include "screens/game_screen.h"
+#include "wyrmsweeper.h"
 
 MainMenuScreen::MainMenuScreen(Wyrmsweeper* game)
     : Screen(game)
