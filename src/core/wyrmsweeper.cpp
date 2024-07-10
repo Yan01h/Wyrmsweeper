@@ -24,6 +24,7 @@
 
 #include "wyrmsweeper.h"
 
+#include <cassert>
 #include <raylib.h>
 
 #include "screens/main_menu_screen.h"
@@ -34,6 +35,8 @@ const int DEFAULT_SCREEN_HEIGHT = 720;
 void Wyrmsweeper::run()
 {
     initialize();
+
+    assert(_currentScreen.get() != nullptr);
 
     /*    Main loop    */
     while (!WindowShouldClose())
@@ -53,6 +56,7 @@ void Wyrmsweeper::run()
 
 void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
 {
+    assert(newScreen.get() != nullptr);
     _currentScreen = std::move(newScreen);
 }
 

@@ -24,9 +24,13 @@
 
 #include "screen.h"
 
+#include <cassert>
+
 Screen::Screen(Wyrmsweeper* game)
     : _game(game)
-{}
+{
+    assert(game != nullptr);
+}
 
 void Screen::initialize() {}
 
