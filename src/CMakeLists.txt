@@ -26,9 +26,15 @@
 
 set(
     WS_SOURCE_FILES
+    components/screen.h
+    components/screen.cpp
     core/wyrmsweeper.h
     core/wyrmsweeper.cpp
     debug/log.h
+    screens/game_screen.h
+    screens/game_screen.cpp
+    screens/main_menu_screen.h
+    screens/main_menu_screen.cpp
     main.cpp
 )
 

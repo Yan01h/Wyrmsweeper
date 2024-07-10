@@ -22,26 +22,25 @@
  * SOFTWARE.
  */
 
-#ifndef WS_CORE_WYRMSWEEPER_H
-#define WS_CORE_WYRMSWEEPER_H
+#ifndef WS_COMPONENTS_SCREEN_H
+#define WS_COMPONENTS_SCREEN_H
 
-#include <memory>
+class Wyrmsweeper;
 
-#include "components/screen.h"
-
-class Wyrmsweeper final
+class Screen
 {
 public:
-    Wyrmsweeper() = default;
+    Screen() = delete;
+    Screen(Wyrmsweeper* game);
+    virtual ~Screen() = default;
 
-    void run();
+    virtual void initialize();
+    virtual void uninitialize();
 
-    void changeScreen(std::unique_ptr<Screen> newScreen);
-private:
-    void initialize();
-    void uninitialize();
-private:
-    std::unique_ptr<Screen> _currentScreen;
+    virtual void update();
+    virtual void render();
+protected:
+    Wyrmsweeper* _game;
 };
 
 #endif

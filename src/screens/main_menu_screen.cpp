@@ -22,26 +22,26 @@
  * SOFTWARE.
  */
 
-#ifndef WS_CORE_WYRMSWEEPER_H
-#define WS_CORE_WYRMSWEEPER_H
+#include "main_menu_screen.h"
 
-#include <memory>
+#include <raylib.h>
 
-#include "components/screen.h"
+#include "core/wyrmsweeper.h"
+#include "screens/game_screen.h"
 
-class Wyrmsweeper final
+MainMenuScreen::MainMenuScreen(Wyrmsweeper* game)
+    : Screen(game)
+{}
+
+void MainMenuScreen::update()
 {
-public:
-    Wyrmsweeper() = default;
+    if (IsKeyPressed(KEY_SPACE))
+    {
+        _game->changeScreen(std::make_unique<GameScreen>(_game));
+    }
+}
 
-    void run();
-
-    void changeScreen(std::unique_ptr<Screen> newScreen);
-private:
-    void initialize();
-    void uninitialize();
-private:
-    std::unique_ptr<Screen> _currentScreen;
-};
-
-#endif
+void MainMenuScreen::render()
+{
+    DrawText("Press space to start!", 30, 30, 20, WHITE); // NOLINT
+}

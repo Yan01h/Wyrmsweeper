@@ -26,6 +26,8 @@
 
 #include <raylib.h>
 
+#include "screens/main_menu_screen.h"
+
 const int DEFAULT_SCREEN_WIDHT  = 1280;
 const int DEFAULT_SCREEN_HEIGHT = 720;
 
@@ -36,20 +38,34 @@ void Wyrmsweeper::run()
     /*    Main loop    */
     while (!WindowShouldClose())
     {
+        _currentScreen->update();
+
         BeginDrawing();
         ClearBackground(BLACK);
+
+        _currentScreen->render();
+
         EndDrawing();
     }
 
     uninitialize();
 }
 
+void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
+{
+    _currentScreen = std::move(newScreen);
+}
+
 void Wyrmsweeper::initialize()
 {
     /*    Init raylib    */
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
+
     InitWindow(DEFAULT_SCREEN_WIDHT, DEFAULT_SCREEN_HEIGHT, "Wyrmsweeper");
-    SetTargetFPS(30);
-    SetExitKey(KEY_F10);
+    SetExitKey(KEY_NULL);
+
+    /*    Init game    */
+    _currentScreen = std::make_unique<MainMenuScreen>(this);
 }
 
 void Wyrmsweeper::uninitialize()

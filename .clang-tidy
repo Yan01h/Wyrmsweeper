@@ -8,9 +8,8 @@ Checks: '
     portability-*,
     readability-*,
     -modernize-use-nullptr,
+    -readability-convert-member-functions-to-static,
     -readability-redundant-access-specifiers
 '
 WarningsAsErrors: 'true'
 FormatStyle: 'file'
-CheckOptions:
-  bugprone-exception-escape.FunctionsThatShouldNotThrow: 'WinMain','main'

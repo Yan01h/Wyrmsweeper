@@ -22,26 +22,20 @@
  * SOFTWARE.
  */
 
-#ifndef WS_CORE_WYRMSWEEPER_H
-#define WS_CORE_WYRMSWEEPER_H
+#include "game_screen.h"
 
-#include <memory>
+#include <raylib.h>
 
-#include "components/screen.h"
+#include "core/wyrmsweeper.h"
 
-class Wyrmsweeper final
+GameScreen::GameScreen(Wyrmsweeper* game)
+    : Screen(game)
+{}
+
+void GameScreen::update() {}
+
+void GameScreen::render()
 {
-public:
-    Wyrmsweeper() = default;
-
-    void run();
-
-    void changeScreen(std::unique_ptr<Screen> newScreen);
-private:
-    void initialize();
-    void uninitialize();
-private:
-    std::unique_ptr<Screen> _currentScreen;
-};
-
-#endif
+    DrawText("This is the game!", 30, 30, 20, WHITE);     // NOLINT
+    DrawText("Have lots of fun! :)", 30, 60, 20, YELLOW); // NOLINT
+}
