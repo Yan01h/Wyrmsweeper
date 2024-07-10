@@ -40,7 +40,7 @@ public:
     virtual void update();
     virtual void render();
 protected:
-    Wyrmsweeper* _game;
+    Wyrmsweeper* _game; // NOLINT
 };
 
 #endif
