@@ -27,8 +27,6 @@
 
 #include "components/screen.h"
 
-class Wyrmsweeper;
-
 class GameScreen final : public Screen
 {
 public:

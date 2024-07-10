@@ -27,8 +27,6 @@
 
 #include "components/screen.h"
 
-class Wyrmsweeper;
-
 class MainMenuScreen final : public Screen
 {
 public:
