@@ -32,10 +32,6 @@ Screen::Screen(Wyrmsweeper* game)
     assert(game != nullptr);
 }
 
-void Screen::initialize() {}
-
-void Screen::uninitialize() {}
-
 void Screen::update() {}
 
 void Screen::render() {}

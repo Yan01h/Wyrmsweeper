@@ -26,6 +26,8 @@
 
 set(
     WS_SOURCE_FILES
+    components/mine_field.h
+    components/mine_field.cpp
     components/screen.h
     components/screen.cpp
     debug/log.h

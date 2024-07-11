@@ -34,9 +34,6 @@ public:
     Screen(Wyrmsweeper* game);
     virtual ~Screen() = default;
 
-    virtual void initialize();
-    virtual void uninitialize();
-
     virtual void update();
     virtual void render();
 protected:

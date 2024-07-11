@@ -30,6 +30,7 @@
 
 GameScreen::GameScreen(Wyrmsweeper* game)
     : Screen(game)
+    , _field(10, 10, 10) // NOLINT
 {}
 
 void GameScreen::update() {}

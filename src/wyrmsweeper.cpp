@@ -34,9 +34,18 @@ const int DEFAULT_SCREEN_HEIGHT = 720;
 
 void Wyrmsweeper::run()
 {
-    initialize();
+#ifndef WS_DEBUG_BUILD
+    SetTraceLogLevel(LOG_NONE);
+#endif
 
-    assert(_currentScreen.get() != nullptr);
+    /*    Init raylib    */
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
+
+    InitWindow(DEFAULT_SCREEN_WIDHT, DEFAULT_SCREEN_HEIGHT, "Wyrmsweeper");
+    SetExitKey(KEY_NULL);
+
+    /*    Init game    */
+    _currentScreen = std::make_unique<MainMenuScreen>(this);
 
     /*    Main loop    */
     while (!WindowShouldClose())
@@ -51,33 +60,12 @@ void Wyrmsweeper::run()
         EndDrawing();
     }
 
-    uninitialize();
+    /*    Cleanup raylib    */
+    CloseWindow();
 }
 
 void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
 {
     assert(newScreen.get() != nullptr);
     _currentScreen = std::move(newScreen);
-}
-
-void Wyrmsweeper::initialize()
-{
-#ifndef WS_DEBUG_BUILD
-    SetTraceLogLevel(LOG_NONE);
-#endif
-
-    /*    Init raylib    */
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
-
-    InitWindow(DEFAULT_SCREEN_WIDHT, DEFAULT_SCREEN_HEIGHT, "Wyrmsweeper");
-    SetExitKey(KEY_NULL);
-
-    /*    Init game    */
-    _currentScreen = std::make_unique<MainMenuScreen>(this);
-}
-
-void Wyrmsweeper::uninitialize()
-{
-    /*    Cleanup raylib    */
-    CloseWindow();
 }

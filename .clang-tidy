@@ -7,10 +7,11 @@ Checks: '
     performance-*,
     portability-*,
     readability-*,
+    -bugprone-easily-swappable-parameters
     -cppcoreguidelines-special-member-functions,
     -modernize-use-nullptr,
     -readability-convert-member-functions-to-static,
-    -readability-redundant-access-specifiers
+    -readability-redundant-access-specifiers,
 '
 WarningsAsErrors: 'true'
 FormatStyle: 'file'

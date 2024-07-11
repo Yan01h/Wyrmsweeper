@@ -25,6 +25,7 @@
 #ifndef WS_SCREENS_GAME_SCREEN_H
 #define WS_SCREENS_GAME_SCREEN_H
 
+#include "components/mine_field.h"
 #include "components/screen.h"
 
 class GameScreen final : public Screen
@@ -34,6 +35,8 @@ public:
 
     void update() override;
     void render() override;
+private:
+    MineField _field;
 };
 
 #endif

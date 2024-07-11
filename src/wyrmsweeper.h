@@ -38,9 +38,6 @@ public:
 
     void changeScreen(std::unique_ptr<Screen> newScreen);
 private:
-    void initialize();
-    void uninitialize();
-private:
     std::unique_ptr<Screen> _currentScreen;
 };
 
