@@ -26,6 +26,7 @@
 #define WS_SCREENS_GAME_SCREEN_H
 
 #include <memory>
+#include <raylib.h>
 
 #include "components/mine_field.h"
 #include "components/screen.h"
@@ -38,6 +39,7 @@ public:
     void update() override;
     void render() override;
 private:
+    Camera2D  _camera;
     MineField _field;
 };
 

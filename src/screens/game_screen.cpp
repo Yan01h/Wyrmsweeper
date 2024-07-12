@@ -26,17 +26,47 @@
 
 #include <raylib.h>
 
+#include "debug/log.h"
 #include "wyrmsweeper.h"
+
+constexpr const float ZOOM_MULTIPLIER = 0.1F;
 
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
+    , _camera()
     , _field(width, height, mineCount)
-{}
+{
+    _camera.target = {0, 0};
+    _camera.zoom   = 1.F;
+}
 
-void GameScreen::update() {}
+void GameScreen::update()
+{
+    static bool dragCamera = false;
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        dragCamera = true;
+    }
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+    {
+        dragCamera = false;
+    }
+    _camera.zoom += GetMouseWheelMove() * ZOOM_MULTIPLIER;
+
+    if (dragCamera)
+    {
+        Vector2 diff = GetMouseDelta();
+        _camera.target.x -= diff.x / _camera.zoom;
+        _camera.target.y -= diff.y / _camera.zoom;
+    }
+}
 
 void GameScreen::render()
 {
-    DrawText("This is the game!", 30, 30, 20, WHITE);     // NOLINT
-    DrawText("Have lots of fun! :)", 30, 60, 20, YELLOW); // NOLINT
+    BeginMode2D(_camera);
+    {
+        DrawRectangle(0, 0, 300, 300, RED); // NOLINT
+    }
+    EndMode2D();
 }
