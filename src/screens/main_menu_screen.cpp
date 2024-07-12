@@ -37,7 +37,7 @@ void MainMenuScreen::update()
 {
     if (IsKeyPressed(KEY_SPACE))
     {
-        _game->changeScreen(std::make_unique<GameScreen>(_game));
+        _game->changeScreen(std::make_unique<GameScreen>(_game, 10, 10, 10)); // NOLINT
     }
 }
 

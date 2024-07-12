@@ -28,9 +28,9 @@
 
 #include "wyrmsweeper.h"
 
-GameScreen::GameScreen(Wyrmsweeper* game)
+GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
-    , _field(10, 10, 10) // NOLINT
+    , _field(width, height, mineCount)
 {}
 
 void GameScreen::update() {}

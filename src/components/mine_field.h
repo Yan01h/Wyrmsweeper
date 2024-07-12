@@ -22,23 +22,41 @@
  * SOFTWARE.
  */
 
-#ifndef WS_SCREENS_GAME_SCREEN_H
-#define WS_SCREENS_GAME_SCREEN_H
+#ifndef WS_COMPONENTS_MINE_FIELD_H
+#define WS_COMPONENTS_MINE_FIELD_H
 
-#include <memory>
+#include <vector>
 
-#include "components/mine_field.h"
-#include "components/screen.h"
+constexpr char BOMB_NUM = 9;
 
-class GameScreen final : public Screen
+struct Tile
+{
+    char number;
+    bool open;
+};
+
+class MineField final
 {
 public:
-    GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
+    MineField() = delete;
+    MineField(int width, int height, int mineCount);
 
-    void update() override;
-    void render() override;
+    auto get(int row, int column) -> Tile&;
 private:
-    MineField _field;
+    void create();
+
+    void placeBombs();
+    void adjustNumbers();
+
+    auto countBombsAround(int row, int column) -> char;
+
+    void logField();
+private:
+    int _width;
+    int _height;
+    int _bombCount;
+
+    std::vector<Tile> _tiles;
 };
 
 #endif

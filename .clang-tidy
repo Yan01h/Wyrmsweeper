@@ -8,6 +8,7 @@ Checks: '
     portability-*,
     readability-*,
     -bugprone-easily-swappable-parameters
+    -cppcoreguidelines-pro-type-vararg,
     -cppcoreguidelines-special-member-functions,
     -modernize-use-nullptr,
     -readability-convert-member-functions-to-static,
