@@ -26,18 +26,38 @@
 
 #include <raylib.h>
 
+#include "assets/classic_theme/sprite_sheet.h" // temporary
 #include "debug/log.h"
 #include "wyrmsweeper.h"
 
 constexpr const float ZOOM_MULTIPLIER = 0.1F;
 
+// TODO: Remove all the this:
+// BACKGROUND: 192 192 192 255
+// constexpr const int TILE_BOX_SIZE   = 100;
+// constexpr const int TILE_BOX_BORDER = 10;
+//
+// constexpr const Color TILE_COLOR_BORDER = {80, 80, 80, 255};
+// constexpr const Color TILE_COLOR_CENTER = {130, 130, 130, 255};
+
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
     , _camera()
     , _field(width, height, mineCount)
+    , _sheet()
 {
     _camera.target = {0, 0};
     _camera.zoom   = 1.F;
+
+    // Load sprite sheet
+    Image spriteSheet;
+    spriteSheet.width   = Themes::Classic::SHEET_WIDTH;
+    spriteSheet.height  = Themes::Classic::SHEET_HEIGHT;
+    spriteSheet.format  = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+    spriteSheet.mipmaps = 1;
+    spriteSheet.data    = (void*)Themes::Classic::SHEET_DATA; // NOLINT
+
+    _sheet = LoadTextureFromImage(spriteSheet);
 }
 
 void GameScreen::update()
@@ -66,7 +86,24 @@ void GameScreen::render()
 {
     BeginMode2D(_camera);
     {
-        DrawRectangle(0, 0, 300, 300, RED); // NOLINT
+        for (int row = 0; row < _field.getHeight(); row++)
+        {
+            for (int column = 0; column < _field.getWidth(); column++)
+            {
+                Tile& tile = _field.get(row, column);
+                if (tile.open)
+                {
+                    // TODO
+                } else
+                {
+                    Rectangle src{CLOSED_NUM * Themes::Classic::SHEET_HEIGHT, 0, Themes::Classic::SHEET_HEIGHT,
+                                  Themes::Classic::SHEET_HEIGHT};
+                    Vector2   pos{(float)column * Themes::Classic::SHEET_HEIGHT,
+                                (float)row * Themes::Classic::SHEET_HEIGHT};
+                    DrawTextureRec(_sheet, src, pos, WHITE);
+                }
+            }
+        }
     }
     EndMode2D();
 }

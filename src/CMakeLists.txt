@@ -26,10 +26,12 @@
 
 set(
     WS_SOURCE_FILES
+    assets/classic_theme/sprite_sheet.h
     components/mine_field.h
     components/mine_field.cpp
     components/screen.h
     components/screen.cpp
+    components/theme.h
     debug/log.h
     screens/game_screen.h
     screens/game_screen.cpp

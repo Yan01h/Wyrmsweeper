@@ -27,7 +27,9 @@
 
 #include <vector>
 
-constexpr char BOMB_NUM = 9;
+constexpr char BOMB_NUM   = 9;
+constexpr char CLOSED_NUM = 10;
+constexpr char FLAG_NUM   = 11;
 
 struct Tile
 {
@@ -42,6 +44,10 @@ public:
     MineField(int width, int height, int mineCount);
 
     auto get(int row, int column) -> Tile&;
+    auto getBombCount() -> int&;
+
+    [[nodiscard]] auto getWidth() const -> int;
+    [[nodiscard]] auto getHeight() const -> int;
 private:
     void create();
 

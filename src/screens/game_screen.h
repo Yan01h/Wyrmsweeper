@@ -41,6 +41,8 @@ public:
 private:
     Camera2D  _camera;
     MineField _field;
+
+    Texture2D _sheet;
 };
 
 #endif
