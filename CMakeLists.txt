@@ -55,6 +55,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DWS_DEBUG_BUILD")
 
+set(WS_THIRDPARTY_DIR "${CMAKE_SOURCE_DIR}/thirdparties")
+
 #################
 #    Project    #
 #################

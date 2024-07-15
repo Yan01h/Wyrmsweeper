@@ -38,6 +38,7 @@ set(
     screens/main_menu_screen.cpp
     themes/classic_theme.h
     themes/classic_theme.cpp
+    thirdparties/raygui.cpp
     main.cpp
     wyrmsweeper.h
     wyrmsweeper.cpp
@@ -68,6 +69,20 @@ else ()
     message(STATUS "Making raylib available... Done")
 endif ()
 
+# raygui
+FetchContent_Declare(
+    raygui
+    GIT_REPOSITORY https://github.com/raysan5/raygui.git
+    GIT_TAG        3fb9d77a67243497e10ae0448374a52a2a65e26f
+)
+FetchContent_GetProperties(raygui)
+if (NOT raygui_POPULATED)
+    message(STATUS "Populating raygui...")
+    FetchContent_Populate(raygui)
+    add_subdirectory(${raygui_SOURCE_DIR}/projects/CMake ${raygui_BINARY_DIR})
+    message(STATUS "Populating raygui... Done")
+endif ()
+
 ####################
 #    Executable    #
 ####################
@@ -93,7 +108,7 @@ endif ()
 target_include_directories(Wyrmsweeper PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/generated)
 
 # Libraries
-target_link_libraries(Wyrmsweeper PRIVATE raylib)
+target_link_libraries(Wyrmsweeper PRIVATE raylib raygui)
 
 # Configuration
 configure_file(cmake_config.h.in ${CMAKE_BINARY_DIR}/generated/cmake_config.h)
