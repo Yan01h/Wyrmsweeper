@@ -24,40 +24,27 @@
 
 #include "game_screen.h"
 
-#include <raylib.h>
-
-#include "assets/classic_theme/sprite_sheet.h" // temporary
 #include "debug/log.h"
 #include "wyrmsweeper.h"
 
 constexpr const float ZOOM_MULTIPLIER = 0.1F;
-
-// TODO: Remove all the this:
-// BACKGROUND: 192 192 192 255
-// constexpr const int TILE_BOX_SIZE   = 100;
-// constexpr const int TILE_BOX_BORDER = 10;
-//
-// constexpr const Color TILE_COLOR_BORDER = {80, 80, 80, 255};
-// constexpr const Color TILE_COLOR_CENTER = {130, 130, 130, 255};
 
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
     , _camera()
     , _field(width, height, mineCount)
     , _sheet()
+    , _background()
+    , _bgSrc({0.F, 0.F, 0.F, 0.F})
+    , _bgDest({0.F, 0.F, 0.F, 0.F})
+    , _spriteSrc({0.F, 0.F, 0.F, 0.F})
+    , _spriteDest({0.F, 0.F, 0.F, 0.F})
 {
     _camera.target = {0, 0};
     _camera.zoom   = 1.F;
 
-    // Load sprite sheet
-    Image spriteSheet;
-    spriteSheet.width   = Themes::Classic::SHEET_WIDTH;
-    spriteSheet.height  = Themes::Classic::SHEET_HEIGHT;
-    spriteSheet.format  = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
-    spriteSheet.mipmaps = 1;
-    spriteSheet.data    = (void*)Themes::Classic::SHEET_DATA; // NOLINT
-
-    _sheet = LoadTextureFromImage(spriteSheet);
+    loadTextures();
+    setupRenderRecs();
 }
 
 void GameScreen::update()
@@ -84,6 +71,12 @@ void GameScreen::update()
 
 void GameScreen::render()
 {
+    auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize()); // Avoid repeating call to getTileSize
+
+    // Backgorund
+    DrawTexturePro(_background, _bgSrc, _bgDest, {0.F, 0.F}, 0.F, WHITE);
+
+    // Field
     BeginMode2D(_camera);
     {
         for (int row = 0; row < _field.getHeight(); row++)
@@ -91,19 +84,56 @@ void GameScreen::render()
             for (int column = 0; column < _field.getWidth(); column++)
             {
                 Tile& tile = _field.get(row, column);
-                if (tile.open)
-                {
-                    // TODO
-                } else
-                {
-                    Rectangle src{CLOSED_NUM * Themes::Classic::SHEET_HEIGHT, 0, Themes::Classic::SHEET_HEIGHT,
-                                  Themes::Classic::SHEET_HEIGHT};
-                    Vector2   pos{(float)column * Themes::Classic::SHEET_HEIGHT,
-                                (float)row * Themes::Classic::SHEET_HEIGHT};
-                    DrawTextureRec(_sheet, src, pos, WHITE);
-                }
+
+                _spriteSrc.x  = tile.open ? static_cast<float>(tile.number) * tileSize : CLOSED_NUM * tileSize;
+                _spriteDest.x = static_cast<float>(column) * tileSize;
+                _spriteDest.y = static_cast<float>(row) * tileSize;
+
+                DrawTexturePro(_sheet, _spriteSrc, _spriteDest, {0.F, 0.F}, 0.F, WHITE);
             }
         }
     }
     EndMode2D();
+}
+
+void GameScreen::loadTextures()
+{
+    // Load sprite sheet
+    Image spriteSheet{};
+    spriteSheet.width   = _game->getCurrentTheme()->getSpriteSheetWidth();
+    spriteSheet.height  = _game->getCurrentTheme()->getSpriteSheetHeight();
+    spriteSheet.data    = _game->getCurrentTheme()->getSpriteSheetData();
+    spriteSheet.format  = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8; // All sprite sheets must have this format
+    spriteSheet.mipmaps = 1;
+
+    _sheet = LoadTextureFromImage(spriteSheet);
+
+    // Load background
+    Image background{};
+    background.width   = _game->getCurrentTheme()->getBackgroundWidth();
+    background.height  = _game->getCurrentTheme()->getBackgroundHeight();
+    background.data    = _game->getCurrentTheme()->getBackgroundData();
+    background.format  = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8; // All backgrounds must have this format
+    background.mipmaps = 1;
+
+    _background = LoadTextureFromImage(background);
+}
+
+void GameScreen::setupRenderRecs()
+{
+    // Background
+    _bgSrc.width  = static_cast<float>(_game->getCurrentTheme()->getBackgroundWidth());
+    _bgSrc.height = static_cast<float>(_game->getCurrentTheme()->getBackgroundHeight());
+
+    _bgDest.width  = static_cast<float>(GetScreenWidth());
+    _bgDest.height = static_cast<float>(GetScreenHeight());
+
+    // Sprite sheet
+    auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize());
+
+    _spriteSrc.width  = tileSize;
+    _spriteSrc.height = tileSize;
+
+    _spriteDest.width  = tileSize;
+    _spriteDest.height = tileSize;
 }

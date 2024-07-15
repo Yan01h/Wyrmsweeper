@@ -22,36 +22,39 @@
  * SOFTWARE.
  */
 
-#ifndef WS_SCREENS_GAME_SCREEN_H
-#define WS_SCREENS_GAME_SCREEN_H
+#include "classic_theme.h"
 
-#include <memory>
-#include <raylib.h>
+#include "assets/classic_theme/sprite_sheet.h"
 
-#include "components/mine_field.h"
-#include "components/screen.h"
-
-class GameScreen final : public Screen
+auto ClassicTheme::getSpriteSheetWidth() -> int
 {
-public:
-    GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
+    return Assets::Classic::SHEET_WIDTH;
+}
 
-    void update() override;
-    void render() override;
+auto ClassicTheme::getSpriteSheetHeight() -> int
+{
+    return Assets::Classic::SHEET_HEIGHT;
+}
 
-    void loadTextures();
-    void setupRenderRecs();
-private:
-    Camera2D  _camera;
-    MineField _field;
+auto ClassicTheme::getSpriteSheetData() -> void*
+{
+    return (void*)Assets::Classic::SHEET_DATA; // NOLINT
+}
 
-    Texture2D _sheet;
-    Texture2D _background;
+auto ClassicTheme::getBackgroundWidth() -> int
+{
+    int backgroundWidth = 1;
+    return backgroundWidth;
+}
 
-    Rectangle _bgSrc;
-    Rectangle _bgDest;
-    Rectangle _spriteSrc;
-    Rectangle _spriteDest;
-};
+auto ClassicTheme::getBackgroundHeight() -> int
+{
+    int backgroundHeight = 1;
+    return backgroundHeight;
+}
 
-#endif
+auto ClassicTheme::getBackgroundData() -> void*
+{
+    static unsigned int backgroundData[] = {0xffc0c0c0}; // NOLINT
+    return (void*)backgroundData;
+}

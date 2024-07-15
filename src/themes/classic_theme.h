@@ -22,36 +22,23 @@
  * SOFTWARE.
  */
 
-#ifndef WS_SCREENS_GAME_SCREEN_H
-#define WS_SCREENS_GAME_SCREEN_H
+#ifndef WS_THEMES_CLASSIC_THEME_H
+#define WS_THEMES_CLASSIC_THEME_H
 
-#include <memory>
-#include <raylib.h>
+#include "components/theme.h"
 
-#include "components/mine_field.h"
-#include "components/screen.h"
-
-class GameScreen final : public Screen
+class ClassicTheme final : public Theme
 {
 public:
-    GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
+    ClassicTheme() = default;
 
-    void update() override;
-    void render() override;
+    auto getSpriteSheetWidth() -> int override;
+    auto getSpriteSheetHeight() -> int override;
+    auto getSpriteSheetData() -> void* override;
 
-    void loadTextures();
-    void setupRenderRecs();
-private:
-    Camera2D  _camera;
-    MineField _field;
-
-    Texture2D _sheet;
-    Texture2D _background;
-
-    Rectangle _bgSrc;
-    Rectangle _bgDest;
-    Rectangle _spriteSrc;
-    Rectangle _spriteDest;
+    auto getBackgroundWidth() -> int override;
+    auto getBackgroundHeight() -> int override;
+    auto getBackgroundData() -> void* override;
 };
 
 #endif

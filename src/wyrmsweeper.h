@@ -28,6 +28,7 @@
 #include <memory>
 
 #include "components/screen.h"
+#include "components/theme.h"
 
 class Wyrmsweeper final
 {
@@ -37,8 +38,11 @@ public:
     void run();
 
     void changeScreen(std::unique_ptr<Screen> newScreen);
+
+    [[nodiscard]] auto getCurrentTheme() -> Theme*;
 private:
     std::unique_ptr<Screen> _currentScreen;
+    std::unique_ptr<Theme>  _currentTheme;
 };
 
 #endif

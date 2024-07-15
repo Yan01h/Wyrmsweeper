@@ -29,6 +29,7 @@
 
 #include "screens/game_screen.h" // Temporary
 #include "screens/main_menu_screen.h"
+#include "themes/classic_theme.h"
 
 const int DEFAULT_SCREEN_WIDHT  = 1280;
 const int DEFAULT_SCREEN_HEIGHT = 720;
@@ -46,8 +47,8 @@ void Wyrmsweeper::run()
     SetExitKey(KEY_NULL);
 
     /*    Init game    */
-    //_currentScreen = std::make_unique<MainMenuScreen>(this);
-    _currentScreen = std::make_unique<GameScreen>(this, 10, 10, 10); // Temporary NOLINT
+    _currentScreen = std::make_unique<MainMenuScreen>(this);
+    _currentTheme  = std::make_unique<ClassicTheme>();
 
     /*    Main loop    */
     while (!WindowShouldClose())
@@ -70,4 +71,9 @@ void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
 {
     assert(newScreen.get() != nullptr);
     _currentScreen = std::move(newScreen);
+}
+
+auto Wyrmsweeper::getCurrentTheme() -> Theme*
+{
+    return _currentTheme.get();
 }

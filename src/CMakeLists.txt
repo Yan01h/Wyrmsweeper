@@ -37,6 +37,8 @@ set(
     screens/game_screen.cpp
     screens/main_menu_screen.h
     screens/main_menu_screen.cpp
+    themes/classic_theme.h
+    themes/classic_theme.cpp
     main.cpp
     wyrmsweeper.h
     wyrmsweeper.cpp

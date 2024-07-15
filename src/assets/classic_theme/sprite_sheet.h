@@ -32,7 +32,7 @@
 #ifndef WS_ASSETS_CLASSIC_THEME_SPRITE_SHEET_H
 #define WS_ASSETS_CLASSIC_THEME_SPRITE_SHEET_H
 
-namespace Themes::Classic {
+namespace Assets::Classic {
 
 constexpr const unsigned int SHEET_WIDTH  = 192;
 constexpr const unsigned int SHEET_HEIGHT = 16;
@@ -383,6 +383,6 @@ constexpr const unsigned int SHEET_DATA[] = {
     0xff808080, 0xff808080, 0xff808080};
 // NOLINTEND
 
-} // namespace Themes::Classic
+} // namespace Assets::Classic
 
 #endif
