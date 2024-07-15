@@ -32,7 +32,6 @@ set(
     components/screen.h
     components/screen.cpp
     components/theme.h
-    debug/log.h
     screens/game_screen.h
     screens/game_screen.cpp
     screens/main_menu_screen.h

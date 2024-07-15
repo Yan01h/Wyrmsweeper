@@ -24,7 +24,6 @@
 
 #include "game_screen.h"
 
-#include "debug/log.h"
 #include "wyrmsweeper.h"
 
 constexpr const float ZOOM_MULTIPLIER = 0.1F;

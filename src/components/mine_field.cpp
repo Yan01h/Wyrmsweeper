@@ -26,8 +26,7 @@
 
 #include <cassert>
 #include <random>
-
-#include "debug/log.h"
+#include <raylib.h>
 
 MineField::MineField(int width, int height, int mineCount)
     : _width(width)
@@ -61,7 +60,7 @@ auto MineField::getHeight() const -> int
 
 void MineField::create()
 {
-    LOG_INFO("Creating %ix%i mine field with %i mines", _width, _height, _bombCount);
+    TraceLog(LOG_INFO, "Creating %ix%i mine field with %i mines", _width, _height, _bombCount);
     assert(_width > 0 && _height > 0 && _bombCount > 0);
 
     _tiles.resize(_width * _height, {0, false});
@@ -127,7 +126,7 @@ auto MineField::countBombsAround(int row, int column) -> char
 
 void MineField::logField()
 {
-    LOG_INFO("Generated field:");
+    TraceLog(LOG_INFO, "Generated field:");
     for (int row = 0; row < _height; row++)
     {
         for (int column = 0; column < _width; column++)
