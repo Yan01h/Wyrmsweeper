@@ -47,8 +47,9 @@ void Wyrmsweeper::run()
     SetExitKey(KEY_NULL);
 
     /*    Init game    */
-    _currentScreen = std::make_unique<MainMenuScreen>(this);
+    //_currentScreen = std::make_unique<MainMenuScreen>(this);
     _currentTheme  = std::make_unique<ClassicTheme>();
+    _currentScreen = std::make_unique<GameScreen>(this, 10, 10, 10); // NOLINT
 
     /*    Main loop    */
     while (!WindowShouldClose())

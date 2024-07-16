@@ -39,8 +39,12 @@ public:
     void update() override;
     void render() override;
 
+    // void setupRenderRecs();
+private:
     void loadTextures();
-    void setupRenderRecs();
+
+    void renderBackground();
+    void renderField();
 private:
     Camera2D  _camera;
     MineField _field;
@@ -48,10 +52,10 @@ private:
     Texture2D _sheet;
     Texture2D _background;
 
-    Rectangle _bgSrc;
-    Rectangle _bgDest;
-    Rectangle _spriteSrc;
-    Rectangle _spriteDest;
+    // Rectangle _bgSrc;
+    // Rectangle _bgDest;
+    // Rectangle _spriteSrc;
+    // Rectangle _spriteDest;
 };
 
 #endif

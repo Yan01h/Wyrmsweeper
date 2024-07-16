@@ -24,6 +24,8 @@
 
 #include "game_screen.h"
 
+#include <raymath.h>
+
 #include "wyrmsweeper.h"
 
 constexpr const float ZOOM_MULTIPLIER = 0.1F;
@@ -34,16 +36,11 @@ GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     , _field(width, height, mineCount)
     , _sheet()
     , _background()
-    , _bgSrc({0.F, 0.F, 0.F, 0.F})
-    , _bgDest({0.F, 0.F, 0.F, 0.F})
-    , _spriteSrc({0.F, 0.F, 0.F, 0.F})
-    , _spriteDest({0.F, 0.F, 0.F, 0.F})
 {
     _camera.target = {0, 0};
     _camera.zoom   = 1.F;
 
     loadTextures();
-    setupRenderRecs();
 }
 
 void GameScreen::update()
@@ -62,37 +59,19 @@ void GameScreen::update()
 
     if (dragCamera)
     {
-        Vector2 diff = GetMouseDelta();
-        _camera.target.x -= diff.x / _camera.zoom;
-        _camera.target.y -= diff.y / _camera.zoom;
+        Vector2 diff   = Vector2Divide(GetMouseDelta(), {_camera.zoom, _camera.zoom});
+        _camera.target = Vector2Subtract(_camera.target, diff);
     }
 }
 
 void GameScreen::render()
 {
-    auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize()); // Avoid repeating call to getTileSize
+    // Keep camera pointed to the middle of the window
+    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;
+    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F;
 
-    // Backgorund
-    DrawTexturePro(_background, _bgSrc, _bgDest, {0.F, 0.F}, 0.F, WHITE);
-
-    // Field
-    BeginMode2D(_camera);
-    {
-        for (int row = 0; row < _field.getHeight(); row++)
-        {
-            for (int column = 0; column < _field.getWidth(); column++)
-            {
-                Tile& tile = _field.get(row, column);
-
-                _spriteSrc.x  = tile.open ? static_cast<float>(tile.number) * tileSize : CLOSED_NUM * tileSize;
-                _spriteDest.x = static_cast<float>(column) * tileSize;
-                _spriteDest.y = static_cast<float>(row) * tileSize;
-
-                DrawTexturePro(_sheet, _spriteSrc, _spriteDest, {0.F, 0.F}, 0.F, WHITE);
-            }
-        }
-    }
-    EndMode2D();
+    renderBackground();
+    renderField();
 }
 
 void GameScreen::loadTextures()
@@ -118,21 +97,41 @@ void GameScreen::loadTextures()
     _background = LoadTextureFromImage(background);
 }
 
-void GameScreen::setupRenderRecs()
+void GameScreen::renderBackground()
 {
-    // Background
-    _bgSrc.width  = static_cast<float>(_game->getCurrentTheme()->getBackgroundWidth());
-    _bgSrc.height = static_cast<float>(_game->getCurrentTheme()->getBackgroundHeight());
+    Rectangle source{0.F, 0.F, 0.F, 0.F};
+    source.width  = static_cast<float>(_game->getCurrentTheme()->getBackgroundWidth());
+    source.height = static_cast<float>(_game->getCurrentTheme()->getBackgroundHeight());
 
-    _bgDest.width  = static_cast<float>(GetScreenWidth());
-    _bgDest.height = static_cast<float>(GetScreenHeight());
+    Rectangle destination{0.F, 0.F, 0.F, 0.F};
+    destination.width  = static_cast<float>(GetScreenWidth());
+    destination.height = static_cast<float>(GetScreenHeight());
 
-    // Sprite sheet
-    auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize());
+    DrawTexturePro(_background, source, destination, {0.F, 0.F}, 0.F, WHITE);
+}
 
-    _spriteSrc.width  = tileSize;
-    _spriteSrc.height = tileSize;
+void GameScreen::renderField()
+{
+    BeginMode2D(_camera);
+    {}
+    EndMode2D();
 
-    _spriteDest.width  = tileSize;
-    _spriteDest.height = tileSize;
+    //// Field
+    // BeginMode2D(_camera);
+    //{
+    //     for (int row = 0; row < _field.getHeight(); row++)
+    //     {
+    //         for (int column = 0; column < _field.getWidth(); column++)
+    //         {
+    //             Tile& tile = _field.get(row, column);
+
+    //            _spriteSrc.x  = tile.open ? static_cast<float>(tile.number) * tileSize : CLOSED_NUM * tileSize;
+    //            _spriteDest.x = static_cast<float>(column) * tileSize;
+    //            _spriteDest.y = static_cast<float>(row) * tileSize;
+
+    //            DrawTexturePro(_sheet, _spriteSrc, _spriteDest, {0.F, 0.F}, 0.F, WHITE);
+    //        }
+    //    }
+    //}
+    // EndMode2D();
 }
