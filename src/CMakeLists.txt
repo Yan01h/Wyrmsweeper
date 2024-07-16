@@ -48,40 +48,8 @@ set(
 #    Thirdparties    #
 ######################
 
-include(FetchContent)
-
-# raylib
-option(WS_USE_CUSTOM_RAYLIB "Uses find_package instead of FetchContent for custom raylib implementations" OFF)
-if (WS_USE_CUSTOM_RAYLIB)
-    message(STATUS "Using custom raylib implementation using find_package")
-    find_package(raylib REQUIRED)
-else ()
-    message(STATUS "Using raylib implementation from github using FetchContent")
-    set(BUILD_EXAMPLES OFF CACHE BOOL "")
-    set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "")
-    FetchContent_Declare(
-        raylib
-        GIT_REPOSITORY https://github.com/raysan5/raylib.git
-        GIT_TAG        174313acbfa74d2a45fc0207f47ab00fbdb06050
-    )
-    message(STATUS "Making raylib available...")
-    FetchContent_MakeAvailable(raylib)
-    message(STATUS "Making raylib available... Done")
-endif ()
-
-# raygui
-FetchContent_Declare(
-    raygui
-    GIT_REPOSITORY https://github.com/raysan5/raygui.git
-    GIT_TAG        3fb9d77a67243497e10ae0448374a52a2a65e26f
-)
-FetchContent_GetProperties(raygui)
-if (NOT raygui_POPULATED)
-    message(STATUS "Populating raygui...")
-    FetchContent_Populate(raygui)
-    add_subdirectory(${raygui_SOURCE_DIR}/projects/CMake ${raygui_BINARY_DIR})
-    message(STATUS "Populating raygui... Done")
-endif ()
+find_package(raylib REQUIRED)
+find_package(raygui REQUIRED)
 
 ####################
 #    Executable    #

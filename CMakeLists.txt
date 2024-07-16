@@ -57,6 +57,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DWS_DEBUG_BUILD")
 
 set(WS_THIRDPARTY_DIR "${CMAKE_SOURCE_DIR}/thirdparties")
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 #################
 #    Project    #
 #################
