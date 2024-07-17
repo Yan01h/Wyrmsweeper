@@ -44,16 +44,15 @@ private:
     void renderBackground();
     void renderField();
 private:
+    float _renderTileSize;
+
+    Vector2 _renderFieldSize;
+
     Camera2D  _camera;
     MineField _field;
 
     Texture2D _sheet;
     Texture2D _background;
-
-    // Rectangle _bgSrc;
-    // Rectangle _bgDest;
-    // Rectangle _spriteSrc;
-    // Rectangle _spriteDest;
 };
 
 #endif

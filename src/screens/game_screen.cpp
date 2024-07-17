@@ -32,6 +32,8 @@ constexpr const float ZOOM_MULTIPLIER = 0.1F;
 
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
+    , _renderTileSize(0.F)
+    , _renderFieldSize()
     , _camera()
     , _field(width, height, mineCount)
     , _sheet()
@@ -41,6 +43,13 @@ GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     _camera.zoom   = 1.F;
 
     loadTextures();
+
+    auto tileWidth  = static_cast<float>(GetScreenWidth()) / static_cast<float>(_field.getWidth());
+    auto tileHeight = static_cast<float>(GetScreenHeight()) / static_cast<float>(_field.getHeight());
+    _renderTileSize = std::min(tileWidth, tileHeight);
+
+    _renderFieldSize.x = static_cast<float>(_field.getWidth()) * _renderTileSize;
+    _renderFieldSize.y = static_cast<float>(_field.getHeight()) * _renderTileSize;
 }
 
 void GameScreen::update()
@@ -55,7 +64,7 @@ void GameScreen::update()
     {
         dragCamera = false;
     }
-    _camera.zoom += GetMouseWheelMove() * ZOOM_MULTIPLIER;
+    _camera.zoom = std::max(_camera.zoom + GetMouseWheelMove() * ZOOM_MULTIPLIER, 0.1F);
 
     if (dragCamera)
     {
@@ -66,9 +75,8 @@ void GameScreen::update()
 
 void GameScreen::render()
 {
-    // Keep camera pointed to the middle of the window
-    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;  // NOLINT
-    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F; // NOLINT
+    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;
+    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F;
 
     renderBackground();
     renderField();
@@ -128,10 +136,10 @@ void GameScreen::renderField()
                 source.height = tileSize;
 
                 Rectangle destination{0.F, 0.F, 0.F, 0.F};
-                destination.x      = static_cast<float>(column) * tileSize;
-                destination.y      = static_cast<float>(row) * tileSize;
-                destination.width  = tileSize;
-                destination.height = tileSize;
+                destination.x      = static_cast<float>(column) * _renderTileSize - _renderFieldSize.x / 2.F;
+                destination.y      = static_cast<float>(row) * _renderTileSize - _renderFieldSize.y / 2.F;
+                destination.width  = _renderTileSize;
+                destination.height = _renderTileSize;
 
                 DrawTexturePro(_sheet, source, destination, {0.F, 0.F}, 0.F, WHITE);
             }

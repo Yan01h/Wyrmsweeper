@@ -76,5 +76,6 @@ void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
 
 auto Wyrmsweeper::getCurrentTheme() -> Theme*
 {
+    assert(_currentTheme.get() != nullptr);
     return _currentTheme.get();
 }
