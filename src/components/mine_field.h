@@ -43,7 +43,7 @@ public:
     MineField() = delete;
     MineField(int width, int height, int mineCount);
 
-    auto get(int row, int column) -> Tile&;
+    auto getTile(int row, int column) -> Tile&;
     auto getBombCount() -> int&;
 
     [[nodiscard]] auto getWidth() const -> int;

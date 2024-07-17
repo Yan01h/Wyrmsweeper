@@ -38,8 +38,6 @@ public:
 
     void update() override;
     void render() override;
-
-    // void setupRenderRecs();
 private:
     void loadTextures();
 

@@ -36,7 +36,7 @@ MineField::MineField(int width, int height, int mineCount)
     create();
 }
 
-auto MineField::get(int row, int column) -> Tile&
+auto MineField::getTile(int row, int column) -> Tile&
 {
     assert(row < _height);
     assert(column < _width);
@@ -100,9 +100,9 @@ void MineField::adjustNumbers()
     {
         for (int column = 0; column < _width; column++)
         {
-            if (get(row, column).number != BOMB_NUM)
+            if (getTile(row, column).number != BOMB_NUM)
             {
-                get(row, column).number = countBombsAround(row, column);
+                getTile(row, column).number = countBombsAround(row, column);
             }
         }
     }
@@ -115,7 +115,7 @@ auto MineField::countBombsAround(int row, int column) -> char
     {
         for (int checkColumn = std::max(column - 1, 0); checkColumn <= std::min(column + 1, _width - 1); checkColumn++)
         {
-            if (this->get(checkRow, checkColumn).number == BOMB_NUM)
+            if (this->getTile(checkRow, checkColumn).number == BOMB_NUM)
             {
                 bombCount++;
             }
@@ -131,7 +131,7 @@ void MineField::logField()
     {
         for (int column = 0; column < _width; column++)
         {
-            printf("%i ", get(row, column).number);
+            printf("%i ", getTile(row, column).number);
         }
         printf("\n");
     }

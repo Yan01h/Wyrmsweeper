@@ -67,8 +67,8 @@ void GameScreen::update()
 void GameScreen::render()
 {
     // Keep camera pointed to the middle of the window
-    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;
-    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F;
+    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;  // NOLINT
+    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F; // NOLINT
 
     renderBackground();
     renderField();
@@ -112,26 +112,30 @@ void GameScreen::renderBackground()
 
 void GameScreen::renderField()
 {
+    auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize());
+
     BeginMode2D(_camera);
-    {}
+    {
+        for (int row = 0; row < _field.getHeight(); row++)
+        {
+            for (int column = 0; column < _field.getWidth(); column++)
+            {
+                Tile& tile = _field.getTile(row, column);
+
+                Rectangle source{0.F, 0.F, 0.F, 0.F};
+                source.x      = tile.open ? static_cast<float>(tile.number) * tileSize : CLOSED_NUM * tileSize;
+                source.width  = tileSize;
+                source.height = tileSize;
+
+                Rectangle destination{0.F, 0.F, 0.F, 0.F};
+                destination.x      = static_cast<float>(column) * tileSize;
+                destination.y      = static_cast<float>(row) * tileSize;
+                destination.width  = tileSize;
+                destination.height = tileSize;
+
+                DrawTexturePro(_sheet, source, destination, {0.F, 0.F}, 0.F, WHITE);
+            }
+        }
+    }
     EndMode2D();
-
-    //// Field
-    // BeginMode2D(_camera);
-    //{
-    //     for (int row = 0; row < _field.getHeight(); row++)
-    //     {
-    //         for (int column = 0; column < _field.getWidth(); column++)
-    //         {
-    //             Tile& tile = _field.get(row, column);
-
-    //            _spriteSrc.x  = tile.open ? static_cast<float>(tile.number) * tileSize : CLOSED_NUM * tileSize;
-    //            _spriteDest.x = static_cast<float>(column) * tileSize;
-    //            _spriteDest.y = static_cast<float>(row) * tileSize;
-
-    //            DrawTexturePro(_sheet, _spriteSrc, _spriteDest, {0.F, 0.F}, 0.F, WHITE);
-    //        }
-    //    }
-    //}
-    // EndMode2D();
 }
