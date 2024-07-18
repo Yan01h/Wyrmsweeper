@@ -32,6 +32,7 @@ constexpr const float ZOOM_MULTIPLIER = 0.1F;
 
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
+    , _dragCamera(false)
     , _renderTileSize(0.F)
     , _renderFieldSize()
     , _camera()
@@ -54,21 +55,18 @@ GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
 
 void GameScreen::update()
 {
-    static bool dragCamera = false;
+    Vector2 mouseDelta = GetMouseDelta();
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && (mouseDelta.x != 0.F || mouseDelta.y != 0.F))
     {
-        dragCamera = true;
+        _dragCamera = true;
     }
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-    {
-        dragCamera = false;
-    }
+
     _camera.zoom = std::max(_camera.zoom + GetMouseWheelMove() * ZOOM_MULTIPLIER, 0.1F);
 
-    if (dragCamera)
+    if (_dragCamera)
     {
-        Vector2 diff   = Vector2Divide(GetMouseDelta(), {_camera.zoom, _camera.zoom});
+        Vector2 diff   = Vector2Divide(mouseDelta, {_camera.zoom, _camera.zoom});
         _camera.target = Vector2Subtract(_camera.target, diff);
     }
 }
@@ -156,7 +154,7 @@ void GameScreen::handleTileClick(Tile& tile)
     tile.open = true;
 }
 
-auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> bool
+auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) -> bool
 {
     bool clicked = false;
 
@@ -167,7 +165,13 @@ auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> 
     {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            clicked = true;
+            if (!_dragCamera)
+            {
+                clicked = true;
+            } else
+            {
+                _dragCamera = false;
+            }
         }
     }
 
