@@ -43,6 +43,10 @@ private:
 
     void renderBackground();
     void renderField();
+
+    void handleTileClick(Tile& tile);
+
+    auto tileButton(Rectangle& source, Rectangle& destination) const -> bool;
 private:
     float _renderTileSize;
 

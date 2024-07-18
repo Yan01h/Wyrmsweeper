@@ -141,9 +141,36 @@ void GameScreen::renderField()
                 destination.width  = _renderTileSize;
                 destination.height = _renderTileSize;
 
-                DrawTexturePro(_sheet, source, destination, {0.F, 0.F}, 0.F, WHITE);
+                if (tileButton(source, destination))
+                {
+                    handleTileClick(tile);
+                }
             }
         }
     }
     EndMode2D();
+}
+
+void GameScreen::handleTileClick(Tile& tile)
+{
+    tile.open = true;
+}
+
+auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> bool
+{
+    bool clicked = false;
+
+    float   size  = destination.width * _camera.zoom; // height is not important since its always a perfect square
+    Vector2 mouse = GetMousePosition();
+    Vector2 posTransform = Vector2Transform({destination.x, destination.y}, GetCameraMatrix2D(_camera));
+    if (CheckCollisionPointRec(mouse, {posTransform.x, posTransform.y, size, size}))
+    {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        {
+            clicked = true;
+        }
+    }
+
+    DrawTexturePro(_sheet, source, destination, {0.F, 0.F}, 0.F, WHITE);
+    return clicked;
 }
