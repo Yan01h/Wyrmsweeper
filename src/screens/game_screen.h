@@ -48,7 +48,6 @@ private:
 
     auto tileButton(Rectangle& source, Rectangle& destination) -> bool;
 private:
-    bool  _dragCamera;
     float _renderTileSize;
 
     Vector2 _renderFieldSize;

@@ -32,7 +32,6 @@ constexpr const float ZOOM_MULTIPLIER = 0.1F;
 
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
-    , _dragCamera(false)
     , _renderTileSize(0.F)
     , _renderFieldSize()
     , _camera()
@@ -55,18 +54,21 @@ GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
 
 void GameScreen::update()
 {
-    Vector2 mouseDelta = GetMouseDelta();
+    static bool dragCamera = false;
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && (mouseDelta.x != 0.F || mouseDelta.y != 0.F))
+    if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE))
     {
-        _dragCamera = true;
+        dragCamera = true;
     }
-
+    if (IsMouseButtonReleased(MOUSE_BUTTON_MIDDLE))
+    {
+        dragCamera = false;
+    }
     _camera.zoom = std::max(_camera.zoom + GetMouseWheelMove() * ZOOM_MULTIPLIER, 0.1F);
 
-    if (_dragCamera)
+    if (dragCamera)
     {
-        Vector2 diff   = Vector2Divide(mouseDelta, {_camera.zoom, _camera.zoom});
+        Vector2 diff   = Vector2Divide(GetMouseDelta(), {_camera.zoom, _camera.zoom});
         _camera.target = Vector2Subtract(_camera.target, diff);
     }
 }
@@ -165,13 +167,7 @@ auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) -> bool
     {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (!_dragCamera)
-            {
-                clicked = true;
-            } else
-            {
-                _dragCamera = false;
-            }
+            clicked = true;
         }
     }
 
