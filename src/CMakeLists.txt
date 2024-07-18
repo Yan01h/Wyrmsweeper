@@ -66,7 +66,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set_target_properties(
         Wyrmsweeper PROPERTIES
         LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
-        LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS"
+        LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS"
     )
 else ()
     target_compile_options(Wyrmsweeper PRIVATE -Wall -Wextra -Wpedantic -Werror)
