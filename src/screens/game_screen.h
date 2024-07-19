@@ -44,9 +44,12 @@ private:
     void renderBackground();
     void renderField();
 
-    void handleTileClick(Tile& tile);
+    void handleTileLeftClick(Tile& tile, int row, int column);
+    void handleTileRightClick(Tile& tile);
+    void openEmtpyTilesRecursive(int row, int column);
 
-    auto tileButton(Rectangle& source, Rectangle& destination) -> bool;
+    // Returns raylib mouse button codes
+    auto tileButton(Rectangle& source, Rectangle& destination) const -> int;
 private:
     float _renderTileSize;
 

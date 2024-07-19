@@ -24,6 +24,7 @@
 
 #include "game_screen.h"
 
+#include <algorithm>
 #include <raymath.h>
 
 #include "wyrmsweeper.h"
@@ -141,9 +142,16 @@ void GameScreen::renderField()
                 destination.width  = _renderTileSize;
                 destination.height = _renderTileSize;
 
-                if (tileButton(source, destination))
+                switch (tileButton(source, destination))
                 {
-                    handleTileClick(tile);
+                case MOUSE_BUTTON_LEFT:
+                    handleTileLeftClick(tile, row, column);
+                    break;
+                case MOUSE_BUTTON_RIGHT:
+                    handleTileRightClick(tile);
+                    break;
+                default:
+                    break;
                 }
             }
         }
@@ -151,14 +159,56 @@ void GameScreen::renderField()
     EndMode2D();
 }
 
-void GameScreen::handleTileClick(Tile& tile)
+void GameScreen::handleTileLeftClick(Tile& tile, int row, int column)
 {
+    if (tile.number == 0)
+    {
+        openEmtpyTilesRecursive(row, column);
+    }
     tile.open = true;
 }
 
-auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) -> bool
+void GameScreen::handleTileRightClick(Tile& tile)
 {
-    bool clicked = false;
+    if (!tile.open)
+    {
+        return;
+    }
+
+    if (tile.number != FLAG_NUM)
+    {
+        tile.number = FLAG_NUM;
+    } else
+    {
+        tile.number = CLOSED_NUM;
+    }
+}
+
+void GameScreen::openEmtpyTilesRecursive(int row, int column)
+{
+    Tile& tile = _field.getTile(row, column);
+    if (tile.open)
+    {
+        return;
+    }
+
+    tile.open = true;
+    if (tile.number == 0)
+    {
+        for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
+        {
+            for (int blockColumn = std::max(column - 1, 0); blockColumn <= std::min(column + 1, _field.getWidth() - 1);
+                 blockColumn++)
+            {
+                openEmtpyTilesRecursive(blockRow, blockColumn);
+            }
+        }
+    }
+}
+
+auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> int
+{
+    int button = -1;
 
     float   size  = destination.width * _camera.zoom; // height is not important since its always a perfect square
     Vector2 mouse = GetMousePosition();
@@ -167,10 +217,13 @@ auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) -> bool
     {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            clicked = true;
+            button = MOUSE_BUTTON_LEFT;
+        } else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        {
+            button = MOUSE_BUTTON_RIGHT;
         }
     }
 
     DrawTexturePro(_sheet, source, destination, {0.F, 0.F}, 0.F, WHITE);
-    return clicked;
+    return button;
 }
