@@ -48,7 +48,8 @@ void Wyrmsweeper::run()
 
     /*    Init game    */
     //_currentScreen = std::make_unique<MainMenuScreen>(this);
-    _currentTheme  = std::make_unique<ClassicTheme>();
+    _currentTheme = std::make_unique<ClassicTheme>();
+    //_currentScreen = std::make_unique<GameScreen>(this, 30, 16, 99); // NOLINT
     _currentScreen = std::make_unique<GameScreen>(this, 10, 10, 10); // NOLINT
 
     /*    Main loop    */
