@@ -14,7 +14,7 @@ Checks: '
     -modernize-use-nullptr,
     -readability-convert-member-functions-to-static,
     -readability-magic-numbers,
-    -readability-redundant-access-specifiers
+    -readability-redundant-access-specifiers,
 '
 WarningsAsErrors: 'true'
 FormatStyle: 'file'

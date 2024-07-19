@@ -63,7 +63,7 @@ void MineField::create()
     TraceLog(LOG_INFO, "Creating %ix%i mine field with %i mines", _width, _height, _bombCount);
     assert(_width > 0 && _height > 0 && _bombCount > 0);
 
-    _tiles.resize(_width * _height, {0, false});
+    _tiles.resize(_width * _height, {0, TileState::Closed});
 
     placeBombs();
     adjustNumbers();

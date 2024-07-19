@@ -132,7 +132,19 @@ void GameScreen::renderField()
                 Tile& tile = _field.getTile(row, column);
 
                 Rectangle source{0.F, 0.F, 0.F, 0.F};
-                source.x      = tile.open ? static_cast<float>(tile.number) * tileSize : CLOSED_NUM * tileSize;
+                switch (tile.state)
+                {
+                case TileState::Closed:
+                    source.x = CLOSED_NUM * tileSize;
+                    break;
+                case TileState::Open:
+                    source.x = static_cast<float>(tile.number) * tileSize;
+                    break;
+                case TileState::Flagged:
+                    source.x = FLAG_NUM * tileSize;
+                    break;
+                }
+
                 source.width  = tileSize;
                 source.height = tileSize;
 
@@ -161,38 +173,43 @@ void GameScreen::renderField()
 
 void GameScreen::handleTileLeftClick(Tile& tile, int row, int column)
 {
-    if (tile.number == 0)
-    {
-        openEmtpyTilesRecursive(row, column);
-    }
-    tile.open = true;
-}
-
-void GameScreen::handleTileRightClick(Tile& tile)
-{
-    if (!tile.open)
+    if (tile.state == TileState::Flagged)
     {
         return;
     }
 
-    if (tile.number != FLAG_NUM)
+    if (tile.number == 0)
     {
-        tile.number = FLAG_NUM;
+        openEmtpyTilesRecursive(row, column);
+    }
+    tile.state = TileState::Open;
+}
+
+void GameScreen::handleTileRightClick(Tile& tile)
+{
+    if (tile.state == TileState::Open)
+    {
+        return;
+    }
+
+    if (tile.state != TileState::Flagged)
+    {
+        tile.state = TileState::Flagged;
     } else
     {
-        tile.number = CLOSED_NUM;
+        tile.state = TileState::Closed;
     }
 }
 
 void GameScreen::openEmtpyTilesRecursive(int row, int column)
 {
     Tile& tile = _field.getTile(row, column);
-    if (tile.open)
+    if (tile.state == TileState::Open)
     {
         return;
     }
 
-    tile.open = true;
+    tile.state = TileState::Open;
     if (tile.number == 0)
     {
         for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)

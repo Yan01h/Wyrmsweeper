@@ -31,10 +31,17 @@ constexpr char BOMB_NUM   = 9;
 constexpr char CLOSED_NUM = 10;
 constexpr char FLAG_NUM   = 11;
 
+enum class TileState
+{
+    Closed = 0,
+    Open,
+    Flagged
+};
+
 struct Tile
 {
-    char number;
-    bool open;
+    char      number;
+    TileState state;
 };
 
 class MineField final
