@@ -173,7 +173,19 @@ void GameScreen::renderField()
 
 void GameScreen::handleTileLeftClick(Tile& tile, int row, int column)
 {
-    if (tile.state == TileState::Flagged)
+    if (tile.state == TileState::Open && tile.number != 0)
+    {
+        doChordClick(row, column);
+    } else
+    {
+        doSingleTileClick(row, column);
+    }
+}
+
+void GameScreen::doSingleTileClick(int row, int column)
+{
+    Tile& tile = _field.getTile(row, column);
+    if (tile.state == TileState::Open || tile.state == TileState::Flagged)
     {
         return;
     }
@@ -181,55 +193,14 @@ void GameScreen::handleTileLeftClick(Tile& tile, int row, int column)
     if (tile.number == 0)
     {
         openEmtpyTilesRecursive(row, column);
-    } else if (tile.state == TileState::Open)
-    {
-        chordClick(row, column);
-    }
-    tile.state = TileState::Open;
-}
-
-void GameScreen::handleTileRightClick(Tile& tile)
-{
-    if (tile.state == TileState::Open)
-    {
-        return;
-    }
-
-    if (tile.state != TileState::Flagged)
-    {
-        tile.state = TileState::Flagged;
     } else
     {
-        tile.state = TileState::Closed;
+        tile.state = TileState::Open;
     }
 }
 
-void GameScreen::openEmtpyTilesRecursive(int row, int column)
+void GameScreen::doChordClick(int row, int column)
 {
-    Tile& tile = _field.getTile(row, column);
-    if (tile.state == TileState::Open)
-    {
-        return;
-    }
-
-    tile.state = TileState::Open;
-    if (tile.number == 0)
-    {
-        for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
-        {
-            for (int blockColumn = std::max(column - 1, 0); blockColumn <= std::min(column + 1, _field.getWidth() - 1);
-                 blockColumn++)
-            {
-                openEmtpyTilesRecursive(blockRow, blockColumn);
-            }
-        }
-    }
-}
-
-void GameScreen::chordClick(int row, int column)
-{
-    // char bombCount = _field.countBombsAround(row, column);
-
     // Count flags
     int flagCount = 0;
     for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
@@ -254,14 +225,112 @@ void GameScreen::chordClick(int row, int column)
         for (int blockColumn = std::max(column - 1, 0); blockColumn <= std::min(column + 1, _field.getWidth() - 1);
              blockColumn++)
         {
-            Tile& tile = _field.getTile(blockRow, blockColumn);
-            if (tile.state != TileState::Flagged)
+            doSingleTileClick(blockRow, blockColumn);
+        }
+    }
+}
+
+void GameScreen::handleTileRightClick(Tile& tile)
+{
+    if (tile.state == TileState::Open)
+    {
+        return;
+    }
+    tile.state = tile.state == TileState::Closed ? TileState::Flagged : TileState::Closed;
+}
+
+void GameScreen::openEmtpyTilesRecursive(int row, int column)
+{
+    Tile& tile = _field.getTile(row, column);
+    if (tile.state == TileState::Open)
+    {
+        return;
+    }
+
+    tile.state = TileState::Open;
+    if (tile.number == 0)
+    {
+        for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
+        {
+            for (int blockColumn = std::max(column - 1, 0); blockColumn <= std::min(column + 1, _field.getWidth() - 1);
+                 blockColumn++)
             {
-                tile.state = TileState::Open;
+                openEmtpyTilesRecursive(blockRow, blockColumn);
             }
         }
     }
 }
+
+// void GameScreen::handleTileLeftClick(Tile& tile, int row, int column)
+//{
+//     if (tile.state == TileState::Flagged)
+//     {
+//         return;
+//     }
+//
+//     if (tile.number == 0)
+//     {
+//         openEmtpyTilesRecursive(row, column);
+//     } else if (tile.state == TileState::Open)
+//     {
+//         chordClick(row, column);
+//     }
+//     tile.state = TileState::Open;
+// }
+//
+// void GameScreen::handleTileRightClick(Tile& tile)
+//{
+//     if (tile.state == TileState::Open)
+//     {
+//         return;
+//     }
+//
+//     if (tile.state != TileState::Flagged)
+//     {
+//         tile.state = TileState::Flagged;
+//     } else
+//     {
+//         tile.state = TileState::Closed;
+//     }
+// }
+//
+//
+// void GameScreen::chordClick(int row, int column)
+//{
+//     // char bombCount = _field.countBombsAround(row, column);
+//
+//     // Count flags
+//     int flagCount = 0;
+//     for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
+//     {
+//         for (int blockColumn = std::max(column - 1, 0); blockColumn <= std::min(column + 1, _field.getWidth() - 1);
+//              blockColumn++)
+//         {
+//             if (_field.getTile(blockRow, blockColumn).state == TileState::Flagged)
+//             {
+//                 flagCount++;
+//             }
+//         }
+//     }
+//
+//     if (flagCount != _field.getTile(row, column).number)
+//     {
+//         return;
+//     }
+//
+//     for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
+//     {
+//         for (int blockColumn = std::max(column - 1, 0); blockColumn <= std::min(column + 1, _field.getWidth() - 1);
+//              blockColumn++)
+//         {
+//             Tile& tile = _field.getTile(blockRow, blockColumn);
+//             if (tile.state != TileState::Flagged)
+//             {
+//                 tile.state = TileState::Open;
+//             }
+//         }
+//     }
+// }
 
 auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> int
 {

@@ -45,9 +45,17 @@ private:
     void renderField();
 
     void handleTileLeftClick(Tile& tile, int row, int column);
+    void doSingleTileClick(int row, int column);
+    void doChordClick(int row, int column);
+
     void handleTileRightClick(Tile& tile);
+
     void openEmtpyTilesRecursive(int row, int column);
-    void chordClick(int row, int column);
+
+    // void handleTileLeftClick(Tile& tile, int row, int column);
+    // void handleTileRightClick(Tile& tile);
+    // void openEmtpyTilesRecursive(int row, int column);
+    // void chordClick(int row, int column);
 
     // Returns raylib mouse button codes
     auto tileButton(Rectangle& source, Rectangle& destination) const -> int;
