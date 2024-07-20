@@ -44,6 +44,10 @@ set(
     wyrmsweeper.cpp
 )
 
+if (WIN32)
+    set(WS_SOURCE_FILES ${WS_SOURCE_FILES} win32_resource.rc)
+endif ()
+
 ######################
 #    Thirdparties    #
 ######################
