@@ -25,25 +25,47 @@
 #include "game_screen.h"
 
 #include <algorithm>
+#include <raygui.h>
 #include <raymath.h>
 
+#include "screens/main_menu_screen.h"
 #include "wyrmsweeper.h"
 
 constexpr const float ZOOM_MULTIPLIER = 0.1F;
 
+constexpr const int   FONT_TTF_DEFAULT_NUMCHARS = 95;
+constexpr const int   FONT_LOAD_FONT_SIZE       = 32;
+constexpr const float FONT_SIZE_BIG             = 48.F;
+
+constexpr const float GUI_BUTTON_SIZE        = 50.F;
+constexpr const float GUI_QUIT_DIALOG_WIDTH  = 500.F;
+constexpr const float GUI_QUIT_DIALOG_HEIGHT = 150.F;
+
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
+    , _bombCount(mineCount)
+    , _normalTileCount(width * height - mineCount)
     , _renderTileSize(0.F)
+    , _quitDialog(false)
     , _renderFieldSize()
     , _camera()
     , _field(width, height, mineCount)
     , _sheet()
     , _background()
+    , _font()
+    , _gameState(GameState::Playing)
 {
     _camera.target = {0, 0};
     _camera.zoom   = 1.F;
 
     loadTextures();
+
+    _font = LoadFontFromMemory(".ttf", game->getCurrentTheme()->getFontData(),
+                               sizeof(game->getCurrentTheme()->getFontData()), FONT_LOAD_FONT_SIZE, nullptr,
+                               FONT_TTF_DEFAULT_NUMCHARS);
+    GuiSetFont(_font);
+    GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
+    GuiSetIconScale(2);
 
     auto tileWidth  = static_cast<float>(GetScreenWidth()) / static_cast<float>(_field.getWidth());
     auto tileHeight = static_cast<float>(GetScreenHeight()) / static_cast<float>(_field.getHeight());
@@ -51,10 +73,29 @@ GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
 
     _renderFieldSize.x = static_cast<float>(_field.getWidth()) * _renderTileSize;
     _renderFieldSize.y = static_cast<float>(_field.getHeight()) * _renderTileSize;
+
+    TraceLog(LOG_INFO, "GameScreen(0x%2x) constructed", this);
+}
+
+GameScreen::~GameScreen()
+{
+    UnloadTexture(_sheet);
+    UnloadTexture(_background);
+
+    UnloadFont(_font);
+
+    GuiSetFont(GetFontDefault());
+
+    TraceLog(LOG_INFO, "GameScreen(0x%2x) destroyed", this);
 }
 
 void GameScreen::update()
 {
+    if (_quitDialog)
+    {
+        return;
+    }
+
     static bool dragCamera = false;
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE))
@@ -81,6 +122,7 @@ void GameScreen::render()
 
     renderBackground();
     renderField();
+    renderGUI();
 }
 
 void GameScreen::loadTextures()
@@ -171,6 +213,59 @@ void GameScreen::renderField()
     EndMode2D();
 }
 
+void GameScreen::renderGUI()
+{
+    if (_gameState == GameState::Exploded)
+    {
+        Vector2 size = MeasureTextEx(_font, "Game Over", FONT_SIZE_BIG, 1.F);
+        Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - size.x / 2,
+                    static_cast<float>(GetScreenHeight()) - 2 * size.y};
+        DrawTextEx(_font, "Game Over", pos, FONT_SIZE_BIG, 1.F, RED);
+    } else if (_gameState == GameState::Won)
+    {
+        Vector2 size = MeasureTextEx(_font, "You Win!", FONT_SIZE_BIG, 1.F);
+        Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - size.x / 2,
+                    static_cast<float>(GetScreenHeight()) - 2 * size.y};
+        DrawTextEx(_font, "You Win!", pos, FONT_SIZE_BIG, 1.F, GREEN);
+    }
+
+    if (GuiButton({10, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#56#"))
+    {
+        _quitDialog = true;
+    }
+    if (_quitDialog)
+    {
+        GuiSetIconScale(1); // Needed so info icon won't render outside of the dialog window
+        Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - GUI_QUIT_DIALOG_WIDTH / 2,
+                    static_cast<float>(GetScreenHeight()) / 2 - GUI_QUIT_DIALOG_HEIGHT / 2};
+        int     result = GuiMessageBox({pos.x, pos.y, GUI_QUIT_DIALOG_WIDTH, GUI_QUIT_DIALOG_HEIGHT}, "#191#",
+                                       "Are you sure you want to return to the main menu?", "Cancel;Yes");
+        GuiSetIconScale(2);
+
+        switch (result)
+        {
+        case 0:
+        case 1:
+            _quitDialog = false;
+            break;
+        case 2:
+            _game->changeScreen(std::make_unique<MainMenuScreen>(_game));
+            return;
+        default:
+            break;
+        }
+    }
+
+    if (_gameState != GameState::Playing)
+    {
+        if (GuiButton({20 + GUI_BUTTON_SIZE, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#60#"))
+        {
+            _game->changeScreen(
+                std::make_unique<GameScreen>(_game, _field.getWidth(), _field.getHeight(), _field.getBombCount()));
+        }
+    }
+}
+
 void GameScreen::handleTileLeftClick(Tile& tile, int row, int column)
 {
     if (tile.state == TileState::Open && tile.number != 0)
@@ -195,7 +290,21 @@ void GameScreen::doSingleTileClick(int row, int column)
         openEmtpyTilesRecursive(row, column);
     } else
     {
+        if (tile.number != BOMB_NUM)
+        {
+            _normalTileCount--;
+        }
         tile.state = TileState::Open;
+    }
+
+    if (tile.number == BOMB_NUM)
+    {
+        explode();
+    }
+
+    if (_normalTileCount == 0)
+    {
+        _gameState = GameState::Won;
     }
 }
 
@@ -248,6 +357,7 @@ void GameScreen::openEmtpyTilesRecursive(int row, int column)
     }
 
     tile.state = TileState::Open;
+    _normalTileCount--;
     if (tile.number == 0)
     {
         for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
@@ -268,7 +378,8 @@ auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> 
     float   size  = destination.width * _camera.zoom; // height is not important since its always a perfect square
     Vector2 mouse = GetMousePosition();
     Vector2 posTransform = Vector2Transform({destination.x, destination.y}, GetCameraMatrix2D(_camera));
-    if (CheckCollisionPointRec(mouse, {posTransform.x, posTransform.y, size, size}))
+    if (_gameState == GameState::Playing && !_quitDialog &&
+        CheckCollisionPointRec(mouse, {posTransform.x, posTransform.y, size, size}))
     {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
@@ -281,4 +392,20 @@ auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> 
 
     DrawTexturePro(_sheet, source, destination, {0.F, 0.F}, 0.F, WHITE);
     return button;
+}
+
+void GameScreen::explode()
+{
+    _gameState = GameState::Exploded;
+    for (int row = 0; row < _field.getHeight(); row++)
+    {
+        for (int column = 0; column < _field.getWidth(); column++)
+        {
+            Tile& tile = _field.getTile(row, column);
+            if (tile.number == BOMB_NUM)
+            {
+                tile.state = TileState::Open;
+            }
+        }
+    }
 }

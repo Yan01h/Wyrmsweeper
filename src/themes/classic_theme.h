@@ -39,6 +39,8 @@ public:
     auto getBackgroundWidth() -> int override;
     auto getBackgroundHeight() -> int override;
     auto getBackgroundData() -> void* override;
+
+    auto getFontData() -> const unsigned char* override;
 };
 
 #endif

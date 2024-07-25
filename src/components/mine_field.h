@@ -48,17 +48,17 @@ class MineField final
 {
 public:
     MineField() = delete;
-    MineField(int width, int height, int mineCount);
+    MineField(int width, int height, int bombCount);
 
     auto getTile(int row, int column) -> Tile&;
-    auto getBombCount() -> int&;
 
     [[nodiscard]] auto getWidth() const -> int;
     [[nodiscard]] auto getHeight() const -> int;
+    [[nodiscard]] auto getBombCount() const -> int;
 private:
-    void create();
+    void create(int bombCount);
 
-    void placeBombs();
+    void placeBombs(int bombCount);
     void adjustNumbers();
 
     auto countBombsAround(int row, int column) -> char;

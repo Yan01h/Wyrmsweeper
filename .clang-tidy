@@ -13,6 +13,7 @@ Checks: '
     -cppcoreguidelines-special-member-functions,
     -modernize-use-nullptr,
     -readability-convert-member-functions-to-static,
+    -readability-implicit-bool-conversion,
     -readability-magic-numbers,
     -readability-redundant-access-specifiers,
 '

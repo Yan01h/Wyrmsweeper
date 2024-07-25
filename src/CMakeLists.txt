@@ -26,6 +26,7 @@
 
 set(
     WS_SOURCE_FILES
+    assets/classic_theme/font.h
     assets/classic_theme/sprite_sheet.h
     components/mine_field.h
     components/mine_field.cpp

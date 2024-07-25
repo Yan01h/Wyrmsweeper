@@ -28,12 +28,12 @@
 #include <random>
 #include <raylib.h>
 
-MineField::MineField(int width, int height, int mineCount)
+MineField::MineField(int width, int height, int bombCount)
     : _width(width)
     , _height(height)
-    , _bombCount(mineCount)
+    , _bombCount(bombCount)
 {
-    create();
+    create(bombCount);
 }
 
 auto MineField::getTile(int row, int column) -> Tile&
@@ -41,11 +41,6 @@ auto MineField::getTile(int row, int column) -> Tile&
     assert(row < _height);
     assert(column < _width);
     return _tiles[column + row * _width];
-}
-
-auto MineField::getBombCount() -> int&
-{
-    return _bombCount;
 }
 
 auto MineField::getWidth() const -> int
@@ -58,14 +53,19 @@ auto MineField::getHeight() const -> int
     return _height;
 }
 
-void MineField::create()
+auto MineField::getBombCount() const -> int
 {
-    TraceLog(LOG_INFO, "Creating %ix%i mine field with %i mines", _width, _height, _bombCount);
-    assert(_width > 0 && _height > 0 && _bombCount > 0);
+    return _bombCount;
+}
+
+void MineField::create(int bombCount)
+{
+    TraceLog(LOG_INFO, "Creating %ix%i mine field with %i mines", _width, _height, bombCount);
+    assert(_width > 0 && _height > 0 && bombCount > 0);
 
     _tiles.resize(_width * _height, {0, TileState::Closed});
 
-    placeBombs();
+    placeBombs(bombCount);
     adjustNumbers();
 
 #ifdef WS_DEBUG_BUILD
@@ -73,13 +73,13 @@ void MineField::create()
 #endif
 }
 
-void MineField::placeBombs()
+void MineField::placeBombs(int bombCount)
 {
     std::random_device                 randDevice;
     std::mt19937                       mersenne(randDevice());
     std::uniform_int_distribution<int> dist(0, static_cast<int>(_tiles.size() - 1));
 
-    for (int i = 0; i < _bombCount; i++)
+    for (int i = 0; i < bombCount; i++)
     {
         unsigned int bombSpot = dist(mersenne);
         while (_tiles[bombSpot].number == BOMB_NUM)

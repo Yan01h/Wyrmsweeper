@@ -33,8 +33,15 @@
 
 class GameScreen final : public Screen
 {
+    enum class GameState
+    {
+        Playing = 0,
+        Won,
+        Exploded
+    };
 public:
     GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
+    ~GameScreen();
 
     void update() override;
     void render() override;
@@ -43,6 +50,7 @@ private:
 
     void renderBackground();
     void renderField();
+    void renderGUI();
 
     void handleTileLeftClick(Tile& tile, int row, int column);
     void doSingleTileClick(int row, int column);
@@ -54,8 +62,14 @@ private:
 
     // Returns raylib mouse button codes
     auto tileButton(Rectangle& source, Rectangle& destination) const -> int;
+
+    void explode();
 private:
+    int   _bombCount;
+    int   _normalTileCount;
     float _renderTileSize;
+
+    bool _quitDialog;
 
     Vector2 _renderFieldSize;
 
@@ -64,6 +78,10 @@ private:
 
     Texture2D _sheet;
     Texture2D _background;
+
+    Font _font;
+
+    GameState _gameState;
 };
 
 #endif

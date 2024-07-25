@@ -39,6 +39,8 @@ public:
     virtual auto getBackgroundWidth() -> int  = 0;
     virtual auto getBackgroundHeight() -> int = 0;
     virtual auto getBackgroundData() -> void* = 0;
+
+    virtual auto getFontData() -> const unsigned char* = 0;
 };
 
 #endif

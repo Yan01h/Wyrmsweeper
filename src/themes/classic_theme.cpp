@@ -24,6 +24,7 @@
 
 #include "classic_theme.h"
 
+#include "assets/classic_theme/font.h"
 #include "assets/classic_theme/sprite_sheet.h"
 
 auto ClassicTheme::getSpriteSheetWidth() -> int
@@ -57,4 +58,9 @@ auto ClassicTheme::getBackgroundData() -> void*
 {
     static unsigned int backgroundData[] = {0xffc0c0c0}; // NOLINT
     return (void*)backgroundData;
+}
+
+auto ClassicTheme::getFontData() -> const unsigned char*
+{
+    return Assets::Classic::FONT_DATA; // NOLINT
 }
