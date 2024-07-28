@@ -28,7 +28,7 @@
 #include <random>
 #include <raylib.h>
 
-MineField::MineField(int width, int height, int bombCount)
+MineField::MineField(const int width, const int height, const int bombCount)
     : _width(width)
     , _height(height)
     , _bombCount(bombCount)
@@ -36,7 +36,7 @@ MineField::MineField(int width, int height, int bombCount)
     create(bombCount);
 }
 
-auto MineField::getTile(int row, int column) -> Tile&
+auto MineField::getTile(const int row, const int column) -> Tile&
 {
     assert(row < _height);
     assert(column < _width);

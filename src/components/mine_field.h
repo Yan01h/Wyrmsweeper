@@ -31,7 +31,7 @@ constexpr char BOMB_NUM   = 9;
 constexpr char CLOSED_NUM = 10;
 constexpr char FLAG_NUM   = 11;
 
-enum class TileState
+enum class TileState : unsigned char
 {
     Closed = 0,
     Open,

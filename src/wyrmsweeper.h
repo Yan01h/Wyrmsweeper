@@ -39,7 +39,7 @@ public:
 
     void changeScreen(std::unique_ptr<Screen> newScreen);
 
-    [[nodiscard]] auto getCurrentTheme() -> Theme*;
+    [[nodiscard]] auto getCurrentTheme() const -> Theme*;
 private:
     std::unique_ptr<Screen> _currentScreen;
     std::unique_ptr<Theme>  _currentTheme;

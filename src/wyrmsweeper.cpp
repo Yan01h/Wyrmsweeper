@@ -31,8 +31,8 @@
 #include "screens/main_menu_screen.h"
 #include "themes/classic_theme.h"
 
-const int DEFAULT_SCREEN_WIDHT  = 1280;
-const int DEFAULT_SCREEN_HEIGHT = 720;
+constexpr int DEFAULT_SCREEN_WIDHT  = 1280;
+constexpr int DEFAULT_SCREEN_HEIGHT = 720;
 
 void Wyrmsweeper::run()
 {
@@ -75,7 +75,7 @@ void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
     _currentScreen = std::move(newScreen);
 }
 
-auto Wyrmsweeper::getCurrentTheme() -> Theme*
+auto Wyrmsweeper::getCurrentTheme() const -> Theme*
 {
     assert(_currentTheme.get() != nullptr);
     return _currentTheme.get();

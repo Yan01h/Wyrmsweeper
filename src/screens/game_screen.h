@@ -25,7 +25,6 @@
 #ifndef WS_SCREENS_GAME_SCREEN_H
 #define WS_SCREENS_GAME_SCREEN_H
 
-#include <memory>
 #include <raylib.h>
 
 #include "components/mine_field.h"
@@ -33,26 +32,26 @@
 
 class GameScreen final : public Screen
 {
-    enum class GameState
+    enum class GameState : unsigned char
     {
         Playing = 0,
         Won,
         Exploded
     };
 public:
-    GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
-    ~GameScreen();
+     GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
+    ~GameScreen() override;
 
     void update() override;
     void render() override;
 private:
     void loadTextures();
 
-    void renderBackground();
+    void renderBackground() const;
     void renderField();
     void renderGUI();
 
-    void handleTileLeftClick(Tile& tile, int row, int column);
+    void handleTileLeftClick(const Tile& tile, int row, int column);
     void doSingleTileClick(int row, int column);
     void doChordClick(int row, int column);
 
@@ -61,7 +60,7 @@ private:
     void openEmtpyTilesRecursive(int row, int column);
 
     // Returns raylib mouse button codes
-    auto tileButton(Rectangle& source, Rectangle& destination) const -> int;
+    auto tileButton(const Rectangle& source, const Rectangle& destination) const -> int;
 
     void explode();
 private:

@@ -31,15 +31,16 @@
 #include "screens/main_menu_screen.h"
 #include "wyrmsweeper.h"
 
-constexpr const float ZOOM_MULTIPLIER = 0.1F;
+constexpr float ZOOM_MULTIPLIER    = 0.1F;
+constexpr float MINIMUM_ZOOM_LEVEL = 0.1F;
 
-constexpr const int   FONT_TTF_DEFAULT_NUMCHARS = 95;
-constexpr const int   FONT_LOAD_FONT_SIZE       = 32;
-constexpr const float FONT_SIZE_BIG             = 48.F;
+constexpr int   FONT_TTF_DEFAULT_NUMCHARS = 95;
+constexpr int   FONT_LOAD_FONT_SIZE       = 32;
+constexpr float FONT_SIZE_BIG             = 48.F;
 
-constexpr const float GUI_BUTTON_SIZE        = 50.F;
-constexpr const float GUI_QUIT_DIALOG_WIDTH  = 500.F;
-constexpr const float GUI_QUIT_DIALOG_HEIGHT = 150.F;
+constexpr float GUI_BUTTON_SIZE        = 50.F;
+constexpr float GUI_QUIT_DIALOG_WIDTH  = 500.F;
+constexpr float GUI_QUIT_DIALOG_HEIGHT = 150.F;
 
 GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     : Screen(game)
@@ -106,19 +107,19 @@ void GameScreen::update()
     {
         dragCamera = false;
     }
-    _camera.zoom = std::max(_camera.zoom + GetMouseWheelMove() * ZOOM_MULTIPLIER, 0.1F);
+    _camera.zoom = std::max(_camera.zoom + GetMouseWheelMove() * ZOOM_MULTIPLIER, MINIMUM_ZOOM_LEVEL);
 
     if (dragCamera)
     {
-        Vector2 diff   = Vector2Divide(GetMouseDelta(), {_camera.zoom, _camera.zoom});
-        _camera.target = Vector2Subtract(_camera.target, diff);
+        const Vector2 diff = Vector2Divide(GetMouseDelta(), {_camera.zoom, _camera.zoom});
+        _camera.target     = Vector2Subtract(_camera.target, diff);
     }
 }
 
 void GameScreen::render()
 {
-    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;
-    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F;
+    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;  // NOLINT
+    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F; // NOLINT
 
     renderBackground();
     renderField();
@@ -148,7 +149,7 @@ void GameScreen::loadTextures()
     _background = LoadTextureFromImage(background);
 }
 
-void GameScreen::renderBackground()
+void GameScreen::renderBackground() const
 {
     Rectangle source{0.F, 0.F, 0.F, 0.F};
     source.width  = static_cast<float>(_game->getCurrentTheme()->getBackgroundWidth());
@@ -163,7 +164,7 @@ void GameScreen::renderBackground()
 
 void GameScreen::renderField()
 {
-    auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize());
+    const auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize());
 
     BeginMode2D(_camera);
     {
@@ -191,8 +192,8 @@ void GameScreen::renderField()
                 source.height = tileSize;
 
                 Rectangle destination{0.F, 0.F, 0.F, 0.F};
-                destination.x      = static_cast<float>(column) * _renderTileSize - _renderFieldSize.x / 2.F;
-                destination.y      = static_cast<float>(row) * _renderTileSize - _renderFieldSize.y / 2.F;
+                destination.x      = static_cast<float>(column) * _renderTileSize - _renderFieldSize.x / 2.F; // NOLINT
+                destination.y      = static_cast<float>(row) * _renderTileSize - _renderFieldSize.y / 2.F;    // NOLINT
                 destination.width  = _renderTileSize;
                 destination.height = _renderTileSize;
 
@@ -223,13 +224,13 @@ void GameScreen::renderGUI()
         DrawTextEx(_font, "Game Over", pos, FONT_SIZE_BIG, 1.F, RED);
     } else if (_gameState == GameState::Won)
     {
-        Vector2 size = MeasureTextEx(_font, "You Win!", FONT_SIZE_BIG, 1.F);
-        Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - size.x / 2,
-                    static_cast<float>(GetScreenHeight()) - 2 * size.y};
+        auto [x, y] = MeasureTextEx(_font, "You Win!", FONT_SIZE_BIG, 1.F);
+        const Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - x / 2,
+                          static_cast<float>(GetScreenHeight()) - 2 * y};
         DrawTextEx(_font, "You Win!", pos, FONT_SIZE_BIG, 1.F, GREEN);
     }
 
-    if (GuiButton({10, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#56#"))
+    if (GuiButton({10, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#56#")) // NOLINT
     {
         _quitDialog = true;
     }
@@ -258,7 +259,7 @@ void GameScreen::renderGUI()
 
     if (_gameState != GameState::Playing)
     {
-        if (GuiButton({20 + GUI_BUTTON_SIZE, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#60#"))
+        if (GuiButton({20 + GUI_BUTTON_SIZE, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#60#")) // NOLINT
         {
             _game->changeScreen(
                 std::make_unique<GameScreen>(_game, _field.getWidth(), _field.getHeight(), _field.getBombCount()));
@@ -266,7 +267,7 @@ void GameScreen::renderGUI()
     }
 }
 
-void GameScreen::handleTileLeftClick(Tile& tile, int row, int column)
+void GameScreen::handleTileLeftClick(const Tile& tile, const int row, const int column)
 {
     if (tile.state == TileState::Open && tile.number != 0)
     {
@@ -308,7 +309,7 @@ void GameScreen::doSingleTileClick(int row, int column)
     }
 }
 
-void GameScreen::doChordClick(int row, int column)
+void GameScreen::doChordClick(const int row, const int column)
 {
     // Count flags
     int flagCount = 0;
@@ -339,6 +340,7 @@ void GameScreen::doChordClick(int row, int column)
     }
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic
 void GameScreen::handleTileRightClick(Tile& tile)
 {
     if (tile.state == TileState::Open)
@@ -348,7 +350,7 @@ void GameScreen::handleTileRightClick(Tile& tile)
     tile.state = tile.state == TileState::Closed ? TileState::Flagged : TileState::Closed;
 }
 
-void GameScreen::openEmtpyTilesRecursive(int row, int column)
+void GameScreen::openEmtpyTilesRecursive(const int row, const int column) // NOLINT
 {
     Tile& tile = _field.getTile(row, column);
     if (tile.state == TileState::Open)
@@ -371,7 +373,7 @@ void GameScreen::openEmtpyTilesRecursive(int row, int column)
     }
 }
 
-auto GameScreen::tileButton(Rectangle& source, Rectangle& destination) const -> int
+auto GameScreen::tileButton(const Rectangle& source, const Rectangle& destination) const -> int
 {
     int button = -1;
 
@@ -401,10 +403,9 @@ void GameScreen::explode()
     {
         for (int column = 0; column < _field.getWidth(); column++)
         {
-            Tile& tile = _field.getTile(row, column);
-            if (tile.number == BOMB_NUM)
+            if (auto& [number, state] = _field.getTile(row, column); number == BOMB_NUM)
             {
-                tile.state = TileState::Open;
+                state = TileState::Open;
             }
         }
     }

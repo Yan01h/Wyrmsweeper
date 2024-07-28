@@ -30,7 +30,7 @@
 class MainMenuScreen final : public Screen
 {
 public:
-    MainMenuScreen(Wyrmsweeper* game);
+    explicit MainMenuScreen(Wyrmsweeper* game);
 
     void update() override;
     void render() override;
