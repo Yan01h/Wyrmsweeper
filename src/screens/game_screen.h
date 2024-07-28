@@ -30,9 +30,9 @@
 #include "components/mine_field.h"
 #include "components/screen.h"
 
-class GameScreen final : public Screen
+class GameScreen final : public Screen // NOLINT
 {
-    enum class GameState : unsigned char
+    enum class GameState : uint8_t
     {
         Playing = 0,
         Won,
@@ -45,42 +45,51 @@ public:
     void update() override;
     void render() override;
 private:
+    // Setup functions
+    void setupCamera();
     void loadTextures();
+    void loadFont();
+    void calculateRenderSizes();
 
+    // Update functions
+    void updateCamera();
+
+    // Rendering functions
     void renderBackground() const;
     void renderField();
+    void renderTile(int row, int column, float tileSize);
     void renderGUI();
+    void renderCenteredText(const char* text, const Color& color) const;
 
+    // Game logic functions
     void handleTileLeftClick(const Tile& tile, int row, int column);
     void doSingleTileClick(int row, int column);
     void doChordClick(int row, int column);
-
     void handleTileRightClick(Tile& tile);
-
     void openEmtpyTilesRecursive(int row, int column);
-
-    // Returns raylib mouse button codes
-    auto tileButton(const Rectangle& source, const Rectangle& destination) const -> int;
-
     void explode();
+
+    // Helper functions
+    [[nodiscard]] auto tileButton(const Rectangle& source, const Rectangle& destination) const -> int;
 private:
-    int   _bombCount;
-    int   _normalTileCount;
-    float _renderTileSize;
+    // Game state
+    GameState _gameState;
+    int       _bombCount;
+    int       _normalTileCount;
+    bool      _quitDialog;
 
-    bool _quitDialog;
+    // Rendering properties
+    float    _renderTileSize;
+    Vector2  _renderFieldSize;
+    Camera2D _camera;
 
-    Vector2 _renderFieldSize;
-
-    Camera2D  _camera;
+    // Game elements
     MineField _field;
 
+    // Assets
     Texture2D _sheet;
     Texture2D _background;
-
-    Font _font;
-
-    GameState _gameState;
+    Font      _font;
 };
 
 #endif

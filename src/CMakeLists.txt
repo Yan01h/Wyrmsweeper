@@ -25,24 +25,24 @@
 #################
 
 set(
-    WS_SOURCE_FILES
-    assets/classic_theme/font.h
-    assets/classic_theme/sprite_sheet.h
-    components/mine_field.h
-    components/mine_field.cpp
-    components/screen.h
-    components/screen.cpp
-    components/theme.h
-    screens/game_screen.h
-    screens/game_screen.cpp
-    screens/main_menu_screen.h
-    screens/main_menu_screen.cpp
-    themes/classic_theme.h
-    themes/classic_theme.cpp
-    thirdparties/raygui.cpp
-    main.cpp
-    wyrmsweeper.h
-    wyrmsweeper.cpp
+        WS_SOURCE_FILES
+        assets/classic_theme/font.h
+        assets/classic_theme/sprite_sheet.h
+        components/mine_field.h
+        components/mine_field.cpp
+        components/screen.h
+        components/screen.cpp
+        components/theme.h
+        screens/game_screen.h
+        screens/game_screen.cpp
+        screens/main_menu_screen.h
+        screens/main_menu_screen.cpp
+        themes/classic_theme.h
+        themes/classic_theme.cpp
+        thirdparties/raygui.cpp
+        main.cpp
+        wyrmsweeper.h
+        wyrmsweeper.cpp
 )
 
 if (WIN32)
@@ -69,9 +69,9 @@ endif ()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(Wyrmsweeper PRIVATE /W4 /WX)
     set_target_properties(
-        Wyrmsweeper PROPERTIES
-        LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
-        LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS"
+            Wyrmsweeper PROPERTIES
+            LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
+            LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS"
     )
 else ()
     target_compile_options(Wyrmsweeper PRIVATE -Wall -Wextra -Wpedantic -Werror)

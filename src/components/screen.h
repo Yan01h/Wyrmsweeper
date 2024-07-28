@@ -27,11 +27,12 @@
 
 class Wyrmsweeper;
 
-class Screen
+class Screen // NOLINT
 {
 public:
-    Screen() = delete;
-    Screen(Wyrmsweeper* game);
+             Screen() = delete;
+    explicit Screen(Wyrmsweeper* game);
+
     virtual ~Screen() = default;
 
     virtual void update();

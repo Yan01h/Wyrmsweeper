@@ -25,7 +25,7 @@
 #ifndef WS_COMPONENTS_THEME_H
 #define WS_COMPONENTS_THEME_H
 
-class Theme
+class Theme // NOLINT
 {
 public:
     virtual ~Theme() = default;

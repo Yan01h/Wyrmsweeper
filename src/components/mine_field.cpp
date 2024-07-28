@@ -33,6 +33,9 @@ MineField::MineField(const int width, const int height, const int bombCount)
     , _height(height)
     , _bombCount(bombCount)
 {
+    assert(_width < 999);
+    assert(_height < 999);
+
     create(bombCount);
 }
 
@@ -58,7 +61,7 @@ auto MineField::getBombCount() const -> int
     return _bombCount;
 }
 
-void MineField::create(int bombCount)
+void MineField::create(const int bombCount)
 {
     TraceLog(LOG_INFO, "Creating %ix%i mine field with %i mines", _width, _height, bombCount);
     assert(_width > 0 && _height > 0 && bombCount > 0);
@@ -73,11 +76,11 @@ void MineField::create(int bombCount)
 #endif
 }
 
-void MineField::placeBombs(int bombCount)
+void MineField::placeBombs(const int bombCount)
 {
-    std::random_device                 randDevice;
-    std::mt19937                       mersenne(randDevice());
-    std::uniform_int_distribution<int> dist(0, static_cast<int>(_tiles.size() - 1));
+    std::random_device            randDevice;
+    std::mt19937                  mersenne(randDevice());
+    std::uniform_int_distribution dist(0, static_cast<int>(_tiles.size() - 1));
 
     for (int i = 0; i < bombCount; i++)
     {
