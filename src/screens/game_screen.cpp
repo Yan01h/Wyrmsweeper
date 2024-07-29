@@ -248,6 +248,28 @@ void GameScreen::renderGUI()
         renderCenteredText("You Win!", GREEN);
     }
 
+    if (_gameState != GameState::Playing)
+    {
+        if (GuiButton({20 + GUI_BUTTON_SIZE, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#60#")) // NOLINT
+        {
+            _game->changeScreen(
+                std::make_unique<GameScreen>(_game, _field.getWidth(), _field.getHeight(), _field.getBombCount()));
+        }
+    }
+
+    renderQuitDialog();
+}
+
+void GameScreen::renderCenteredText(const char* text, const Color& color) const
+{
+    auto [x, y] = MeasureTextEx(_font, text, FONT_SIZE_BIG, 1.F);
+    const Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - x / 2, static_cast<float>(GetScreenHeight()) - 2 * y};
+
+    DrawTextEx(_font, text, pos, FONT_SIZE_BIG, 1.F, color);
+}
+
+void GameScreen::renderQuitDialog()
+{
     if (GuiButton({10, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#56#") != 0) // NOLINT
     {
         _quitDialog = true;
@@ -275,23 +297,6 @@ void GameScreen::renderGUI()
             break;
         }
     }
-
-    if (_gameState != GameState::Playing)
-    {
-        if (GuiButton({20 + GUI_BUTTON_SIZE, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#60#")) // NOLINT
-        {
-            _game->changeScreen(
-                std::make_unique<GameScreen>(_game, _field.getWidth(), _field.getHeight(), _field.getBombCount()));
-        }
-    }
-}
-
-void GameScreen::renderCenteredText(const char* text, const Color& color) const
-{
-    auto [x, y] = MeasureTextEx(_font, text, FONT_SIZE_BIG, 1.F);
-    const Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - x / 2, static_cast<float>(GetScreenHeight()) - 2 * y};
-
-    DrawTextEx(_font, text, pos, FONT_SIZE_BIG, 1.F, color);
 }
 
 void GameScreen::handleTileLeftClick(const Tile& tile, const int row, const int column)

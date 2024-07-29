@@ -60,6 +60,7 @@ private:
     void renderTile(int row, int column, float tileSize);
     void renderGUI();
     void renderCenteredText(const char* text, const Color& color) const;
+    void renderQuitDialog();
 
     // Game logic functions
     void handleTileLeftClick(const Tile& tile, int row, int column);
