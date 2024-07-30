@@ -40,6 +40,8 @@ set(
         themes/classic_theme.h
         themes/classic_theme.cpp
         thirdparties/raygui.cpp
+        thirdparties/raylib_utils.h
+        thirdparties/raylib_utils.cpp
         main.cpp
         wyrmsweeper.h
         wyrmsweeper.cpp

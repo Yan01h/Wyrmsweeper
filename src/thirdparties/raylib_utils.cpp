@@ -22,26 +22,29 @@
  * SOFTWARE.
  */
 
-#include "main_menu_screen.h"
+#include "raylib_utils.h"
 
-#include <raylib.h>
+constexpr float FONT_BASE_SIZE = 32.F;
 
-#include "screens/game_screen.h"
-#include "wyrmsweeper.h"
+constexpr int FONT_TTF_DEFAULT_NUMCHARS = 95;
 
-MainMenuScreen::MainMenuScreen(Wyrmsweeper* game)
-    : Screen(game)
-{}
+namespace RaylibUtils {
 
-void MainMenuScreen::update()
+auto loadTextureFromMemory(const int width, const int height, const unsigned int* data) -> Texture2D
 {
-    if (IsKeyPressed(KEY_SPACE))
-    {
-        _game->setScreen(std::make_unique<GameScreen>(_game, 10, 10, 10)); // NOLINT
-    }
+    Image image;
+    image.width   = width;
+    image.height  = height;
+    image.data    = (void*)data; // NOLINT
+    image.format  = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+    image.mipmaps = 1;
+
+    return LoadTextureFromImage(image);
 }
 
-void MainMenuScreen::render()
+auto loadFontFromMemory(const unsigned char* data, const int size) -> Font
 {
-    DrawText("Press space to start!", 30, 30, 20, WHITE); // NOLINT
+    return LoadFontFromMemory(".ttf", data, size, FONT_BASE_SIZE, nullptr, FONT_TTF_DEFAULT_NUMCHARS);
 }
+
+} // namespace RaylibUtils

@@ -252,7 +252,7 @@ void GameScreen::renderGUI()
     {
         if (GuiButton({20 + GUI_BUTTON_SIZE, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#60#")) // NOLINT
         {
-            _game->changeScreen(
+            _game->setScreen(
                 std::make_unique<GameScreen>(_game, _field.getWidth(), _field.getHeight(), _field.getBombCount()));
         }
     }
@@ -291,8 +291,7 @@ void GameScreen::renderQuitDialog()
             _quitDialog = false;
             break;
         case 2:
-            _game->changeScreen(std::make_unique<MainMenuScreen>(_game));
-            return;
+            _game->setScreen(std::make_unique<MainMenuScreen>(_game));
         default:
             break;
         }

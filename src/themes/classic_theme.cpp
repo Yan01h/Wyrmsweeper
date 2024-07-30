@@ -24,43 +24,74 @@
 
 #include "classic_theme.h"
 
+#include <raylib.h>
+
 #include "assets/classic_theme/font.h"
 #include "assets/classic_theme/sprite_sheet.h"
+#include "thirdparties/raylib_utils.h"
 
-auto ClassicTheme::getSpriteSheetWidth() -> int
+static constexpr unsigned int BACKGROUND_DATA[] = {0xffc0c0c0};
+
+ClassicTheme::ClassicTheme()
+    : _spriteSheet()
+    , _background()
+    , _font()
 {
-    return Assets::Classic::SHEET_WIDTH;
+    loadAssets();
+
+    TraceLog(LOG_INFO, "Classic theme loaded!");
 }
 
-auto ClassicTheme::getSpriteSheetHeight() -> int
+ClassicTheme::~ClassicTheme()
+{
+    unloadAssets();
+
+    TraceLog(LOG_INFO, "Classic theme unloaded!");
+}
+
+auto ClassicTheme::getTileSize() const -> int
 {
     return Assets::Classic::SHEET_HEIGHT;
 }
 
-auto ClassicTheme::getSpriteSheetData() -> void*
+auto ClassicTheme::getSpriteSheet() const -> const Texture2D&
 {
-    return (void*)Assets::Classic::SHEET_DATA; // NOLINT
+    return _spriteSheet;
 }
 
-auto ClassicTheme::getBackgroundWidth() -> int
+auto ClassicTheme::getBackground() const -> const Texture2D&
 {
-    int backgroundWidth = 1;
-    return backgroundWidth;
+    return _background;
 }
 
-auto ClassicTheme::getBackgroundHeight() -> int
+auto ClassicTheme::getFont() const -> const Font&
 {
-    int backgroundHeight = 1;
-    return backgroundHeight;
+    return _font;
 }
 
-auto ClassicTheme::getBackgroundData() -> void*
+void ClassicTheme::loadAssets()
 {
-    static unsigned int backgroundData[] = {0xffc0c0c0}; // NOLINT
-    return (void*)backgroundData;
+    _spriteSheet = RaylibUtils::loadTextureFromMemory(Assets::Classic::SHEET_WIDTH, Assets::Classic::SHEET_HEIGHT,
+                                                      Assets::Classic::SHEET_DATA);
+
+    _font = RaylibUtils::loadFontFromMemory(Assets::Classic::FONT_DATA, sizeof(Assets::Classic::FONT_DATA));
+
+    createAndLoadBackground();
 }
 
-auto ClassicTheme::getFontData() -> const unsigned char*
+void ClassicTheme::unloadAssets() const
 {
-    return Assets::Classic::FONT_DATA; // NOLINT
+    UnloadTexture(_spriteSheet);
+    UnloadTexture(_background);
+
+    UnloadFont(_font);
+}
+
+void ClassicTheme::createAndLoadBackground()
+{
+    // The background of the classic theme only has one color so we can simply create a 1x1 texture
+    constexpr int width  = 1;
+    constexpr int height = 1;
+
+    _background = RaylibUtils::loadTextureFromMemory(width, height, BACKGROUND_DATA);
 }

@@ -22,26 +22,16 @@
  * SOFTWARE.
  */
 
-#include "main_menu_screen.h"
+#ifndef WS_THIRDPARTIES_RAYLIB_UTILS_H
+#define WS_THIRDPARTIES_RAYLIB_UTILS_H
 
 #include <raylib.h>
 
-#include "screens/game_screen.h"
-#include "wyrmsweeper.h"
+namespace RaylibUtils {
 
-MainMenuScreen::MainMenuScreen(Wyrmsweeper* game)
-    : Screen(game)
-{}
+auto loadTextureFromMemory(int width, int height, const unsigned int* data) -> Texture2D;
+auto loadFontFromMemory(const unsigned char* data, int size) -> Font;
 
-void MainMenuScreen::update()
-{
-    if (IsKeyPressed(KEY_SPACE))
-    {
-        _game->setScreen(std::make_unique<GameScreen>(_game, 10, 10, 10)); // NOLINT
-    }
-}
+} // namespace RaylibUtils
 
-void MainMenuScreen::render()
-{
-    DrawText("Press space to start!", 30, 30, 20, WHITE); // NOLINT
-}
+#endif // WS_THIRDPARTIES_RAYLIB_UTILS_H

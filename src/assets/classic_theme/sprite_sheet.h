@@ -38,7 +38,7 @@ constexpr unsigned int SHEET_WIDTH  = 192;
 constexpr unsigned int SHEET_HEIGHT = 16;
 
 // NOLINTBEGIN
-constexpr const unsigned int SHEET_DATA[] = {
+constexpr unsigned int SHEET_DATA[] = {
     0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080,
     0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080,
     0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080, 0xff808080,

@@ -25,22 +25,20 @@
 #ifndef WS_COMPONENTS_THEME_H
 #define WS_COMPONENTS_THEME_H
 
-class Theme // NOLINT
+#include <raylib.h>
+
+class ITheme
 {
 public:
-    virtual ~Theme() = default;
+    virtual ~ITheme() = default;
 
-    auto getTileSize() -> int { return getSpriteSheetHeight(); }
+    // Asset info
+    [[nodiscard]] virtual auto getTileSize() const -> int = 0;
 
-    virtual auto getSpriteSheetWidth() -> int  = 0;
-    virtual auto getSpriteSheetHeight() -> int = 0;
-    virtual auto getSpriteSheetData() -> void* = 0;
-
-    virtual auto getBackgroundWidth() -> int  = 0;
-    virtual auto getBackgroundHeight() -> int = 0;
-    virtual auto getBackgroundData() -> void* = 0;
-
-    virtual auto getFontData() -> const unsigned char* = 0;
+    // Assets
+    [[nodiscard]] virtual auto getSpriteSheet() const -> const Texture2D& = 0;
+    [[nodiscard]] virtual auto getBackground() const -> const Texture2D&  = 0;
+    [[nodiscard]] virtual auto getFont() const -> const Font&             = 0;
 };
 
 #endif

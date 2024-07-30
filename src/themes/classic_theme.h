@@ -27,20 +27,26 @@
 
 #include "components/theme.h"
 
-class ClassicTheme final : public Theme
+class ClassicTheme final : public ITheme
 {
 public:
-    ClassicTheme() = default;
+     ClassicTheme();
+    ~ClassicTheme() override;
 
-    auto getSpriteSheetWidth() -> int override;
-    auto getSpriteSheetHeight() -> int override;
-    auto getSpriteSheetData() -> void* override;
+    [[nodiscard]] auto getTileSize() const -> int override;
 
-    auto getBackgroundWidth() -> int override;
-    auto getBackgroundHeight() -> int override;
-    auto getBackgroundData() -> void* override;
+    [[nodiscard]] auto getSpriteSheet() const -> const Texture2D& override;
+    [[nodiscard]] auto getBackground() const -> const Texture2D& override;
+    [[nodiscard]] auto getFont() const -> const Font& override;
+private:
+    void loadAssets();
+    void unloadAssets() const;
 
-    auto getFontData() -> const unsigned char* override;
+    void createAndLoadBackground();
+private:
+    Texture2D _spriteSheet;
+    Texture2D _background;
+    Font      _font;
 };
 
 #endif
