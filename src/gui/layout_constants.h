@@ -22,26 +22,14 @@
  * SOFTWARE.
  */
 
-#include "main_menu_screen.h"
+#ifndef WS_GUI_LAYOUT_CONSTATS
+#define WS_GUI_LAYOUT_CONSTATS
 
-#include <raylib.h>
+namespace GUI {
 
-#include "app/wyrmsweeper.h"
-#include "screens/game_screen.h"
+constexpr int ITEM_SPACING   = 10;
+constexpr int WINDOW_PADDING = 10;
 
-MainMenuScreen::MainMenuScreen(Wyrmsweeper* game)
-    : Screen(game)
-{}
+} // namespace GUI
 
-void MainMenuScreen::update()
-{
-    if (IsKeyPressed(KEY_SPACE))
-    {
-        _game->setScreen(std::make_unique<GameScreen>(_game, 10, 10, 10)); // NOLINT
-    }
-}
-
-void MainMenuScreen::render()
-{
-    DrawText("Press space to start!", 30, 30, 20, WHITE); // NOLINT
-}
+#endif WS_GUI_LAYOUT_CONSTATS

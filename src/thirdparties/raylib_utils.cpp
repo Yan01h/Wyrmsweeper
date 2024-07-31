@@ -24,8 +24,7 @@
 
 #include "raylib_utils.h"
 
-constexpr float FONT_BASE_SIZE = 32.F;
-
+constexpr int FONT_BASE_SIZE            = 32;
 constexpr int FONT_TTF_DEFAULT_NUMCHARS = 95;
 
 namespace RaylibUtils {

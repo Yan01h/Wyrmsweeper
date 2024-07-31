@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "wyrmsweeper.h"
+#include "app/wyrmsweeper.h"
 
 auto main(int /*argc*/, char** /*argv*/) -> int
 {

@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef WS_CORE_WYRMSWEEPER_H
-#define WS_CORE_WYRMSWEEPER_H
+#ifndef WS_APP_WYRMSWEEPER_H
+#define WS_APP_WYRMSWEEPER_H
 
 #include <memory>
 

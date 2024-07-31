@@ -24,11 +24,14 @@
 
 #include "classic_theme.h"
 
+#include <raygui.h>
 #include <raylib.h>
 
 #include "assets/classic_theme/font.h"
 #include "assets/classic_theme/sprite_sheet.h"
 #include "thirdparties/raylib_utils.h"
+
+static constexpr int GUI_FONT_SIZE = 16;
 
 static constexpr unsigned int BACKGROUND_DATA[] = {0xffc0c0c0};
 
@@ -39,12 +42,18 @@ ClassicTheme::ClassicTheme()
 {
     loadAssets();
 
+    GuiSetFont(_font);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, GUI_FONT_SIZE);
+    GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
+
     TraceLog(LOG_INFO, "Classic theme loaded!");
 }
 
 ClassicTheme::~ClassicTheme()
 {
     unloadAssets();
+
+    GuiSetFont(GetFontDefault());
 
     TraceLog(LOG_INFO, "Classic theme unloaded!");
 }

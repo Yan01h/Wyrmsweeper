@@ -30,7 +30,7 @@
 #include "components/mine_field.h"
 #include "components/screen.h"
 
-class GameScreen final : public Screen // NOLINT
+class GameScreen final : public Screen
 {
     enum class GameState : uint8_t
     {
@@ -39,16 +39,13 @@ class GameScreen final : public Screen // NOLINT
         Exploded
     };
 public:
-     GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
-    ~GameScreen() override;
+    GameScreen(Wyrmsweeper* game, int width, int height, int mineCount);
 
     void update() override;
     void render() override;
 private:
     // Setup functions
     void setupCamera();
-    void loadTextures();
-    void loadFont();
     void calculateRenderSizes();
 
     // Update functions
@@ -60,7 +57,10 @@ private:
     void renderTile(int row, int column, float tileSize);
     void renderGUI();
     void renderCenteredText(const char* text, const Color& color) const;
-    void renderQuitDialog();
+
+    // GUI
+    void renderAndHandleQuitDialog();
+    void renderAndHandleRetryButton();
 
     // Game logic functions
     void handleTileLeftClick(const Tile& tile, int row, int column);
@@ -86,11 +86,6 @@ private:
 
     // Game elements
     MineField _field;
-
-    // Assets
-    Texture2D _sheet;
-    Texture2D _background;
-    Font      _font;
 };
 
 #endif
