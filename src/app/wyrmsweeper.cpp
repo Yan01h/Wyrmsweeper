@@ -28,7 +28,6 @@
 #include <raylib.h>
 
 #include "screens/game_screen.h" // Temporary
-#include "screens/main_menu_screen.h"
 #include "themes/classic_theme.h"
 
 constexpr int DEFAULT_SCREEN_WIDHT  = 1280;
@@ -40,6 +39,8 @@ void Wyrmsweeper::run()
     SetTraceLogLevel(LOG_NONE);
 #endif
 
+    TraceLog(LOG_INFO, "Starting Wyrmsweeper...");
+
     /*    Init raylib    */
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
 
@@ -47,7 +48,6 @@ void Wyrmsweeper::run()
     SetExitKey(KEY_NULL);
 
     /*    Init game    */
-    //_currentScreen = std::make_unique<MainMenuScreen>(this);
     _currentTheme = std::make_unique<ClassicTheme>();
     //_currentScreen = std::make_unique<GameScreen>(this, 30, 16, 99); // NOLINT
     _currentScreen = std::make_unique<GameScreen>(this, 10, 10, 10); // NOLINT
@@ -69,13 +69,14 @@ void Wyrmsweeper::run()
     CloseWindow();
 }
 
-void Wyrmsweeper::changeScreen(std::unique_ptr<Screen> newScreen)
+void Wyrmsweeper::setScreen(std::unique_ptr<Screen> newScreen)
 {
+    TraceLog(LOG_INFO, "Changing screen...");
     assert(newScreen.get() != nullptr);
     _currentScreen = std::move(newScreen);
 }
 
-auto Wyrmsweeper::getCurrentTheme() const -> Theme*
+auto Wyrmsweeper::getTheme() const -> ITheme*
 {
     assert(_currentTheme.get() != nullptr);
     return _currentTheme.get();

@@ -28,23 +28,23 @@
 #include <raygui.h>
 #include <raymath.h>
 
+#include "app/wyrmsweeper.h"
+#include "gui/layout_constants.h"
 #include "screens/main_menu_screen.h"
-#include "wyrmsweeper.h"
 
 namespace {
 constexpr float ZOOM_MULTIPLIER    = 0.1F;
 constexpr float MINIMUM_ZOOM_LEVEL = 0.1F;
 
-constexpr int   FONT_TTF_DEFAULT_NUMCHARS = 95;
-constexpr int   FONT_LOAD_FONT_SIZE       = 32;
-constexpr float FONT_SIZE_BIG             = 48.F;
+constexpr float FONT_SIZE_BIG = 48.F;
 
-constexpr float GUI_BUTTON_SIZE        = 50.F;
+constexpr float GUI_BUTTON_WIDTH       = 100.F;
+constexpr float GUI_BUTTON_HEIGHT      = 50.F;
 constexpr float GUI_QUIT_DIALOG_WIDTH  = 500.F;
 constexpr float GUI_QUIT_DIALOG_HEIGHT = 150.F;
 } // namespace
 
-GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
+GameScreen::GameScreen(Wyrmsweeper* game, const int width, const int height, const int mineCount)
     : Screen(game)
     , _gameState(GameState::Playing)
     , _bombCount(mineCount)
@@ -54,45 +54,23 @@ GameScreen::GameScreen(Wyrmsweeper* game, int width, int height, int mineCount)
     , _renderFieldSize()
     , _camera()
     , _field(width, height, mineCount)
-    , _sheet()
-    , _background()
-    , _font()
 {
     setupCamera();
-    loadTextures();
-    loadFont();
     calculateRenderSizes();
 
     TraceLog(LOG_INFO, "GameScreen(0x%2x) constructed", this);
 }
 
-GameScreen::~GameScreen()
-{
-    UnloadTexture(_sheet);
-    UnloadTexture(_background);
-
-    UnloadFont(_font);
-
-    GuiSetFont(GetFontDefault());
-
-    TraceLog(LOG_INFO, "GameScreen(0x%2x) destroyed", this);
-}
-
 void GameScreen::update()
 {
-    if (_quitDialog)
+    if (!_quitDialog)
     {
-        return;
+        updateCamera();
     }
-
-    updateCamera();
 }
 
 void GameScreen::render()
 {
-    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;
-    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F;
-
     renderBackground();
     renderField();
     renderGUI();
@@ -102,39 +80,6 @@ void GameScreen::setupCamera()
 {
     _camera.target = {0, 0};
     _camera.zoom   = 1.F;
-}
-
-void GameScreen::loadTextures()
-{
-    // Load sprite sheet
-    Image spriteSheet{};
-    spriteSheet.width   = _game->getCurrentTheme()->getSpriteSheetWidth();
-    spriteSheet.height  = _game->getCurrentTheme()->getSpriteSheetHeight();
-    spriteSheet.data    = _game->getCurrentTheme()->getSpriteSheetData();
-    spriteSheet.format  = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8; // All sprite sheets must have this format
-    spriteSheet.mipmaps = 1;
-
-    _sheet = LoadTextureFromImage(spriteSheet);
-
-    // Load background
-    Image background{};
-    background.width   = _game->getCurrentTheme()->getBackgroundWidth();
-    background.height  = _game->getCurrentTheme()->getBackgroundHeight();
-    background.data    = _game->getCurrentTheme()->getBackgroundData();
-    background.format  = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8; // All backgrounds must have this format
-    background.mipmaps = 1;
-
-    _background = LoadTextureFromImage(background);
-}
-
-void GameScreen::loadFont()
-{
-    _font = LoadFontFromMemory(".ttf", _game->getCurrentTheme()->getFontData(),
-                               sizeof(_game->getCurrentTheme()->getFontData()), FONT_LOAD_FONT_SIZE, nullptr,
-                               FONT_TTF_DEFAULT_NUMCHARS);
-    GuiSetFont(_font);
-    GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
-    GuiSetIconScale(2);
 }
 
 void GameScreen::calculateRenderSizes()
@@ -149,6 +94,7 @@ void GameScreen::calculateRenderSizes()
 
 void GameScreen::updateCamera()
 {
+    // Camera drag
     static bool dragCamera = false;
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE))
@@ -159,31 +105,32 @@ void GameScreen::updateCamera()
     {
         dragCamera = false;
     }
-    _camera.zoom = std::max(_camera.zoom + GetMouseWheelMove() * ZOOM_MULTIPLIER, MINIMUM_ZOOM_LEVEL);
-
     if (dragCamera)
     {
         const Vector2 diff = Vector2Divide(GetMouseDelta(), {_camera.zoom, _camera.zoom});
         _camera.target     = Vector2Subtract(_camera.target, diff);
     }
+
+    // Camera zoom
+    _camera.zoom = std::max(_camera.zoom + GetMouseWheelMove() * ZOOM_MULTIPLIER, MINIMUM_ZOOM_LEVEL);
+
+    // Camera offset
+    _camera.offset.x = static_cast<float>(GetScreenWidth()) / 2.F;
+    _camera.offset.y = static_cast<float>(GetScreenHeight()) / 2.F;
 }
 
 void GameScreen::renderBackground() const
 {
-    Rectangle source{0.F, 0.F, 0.F, 0.F};
-    source.width  = static_cast<float>(_game->getCurrentTheme()->getBackgroundWidth());
-    source.height = static_cast<float>(_game->getCurrentTheme()->getBackgroundHeight());
-
     Rectangle destination{0.F, 0.F, 0.F, 0.F};
     destination.width  = static_cast<float>(GetScreenWidth());
     destination.height = static_cast<float>(GetScreenHeight());
 
-    DrawTexturePro(_background, source, destination, {0.F, 0.F}, 0.F, WHITE);
+    DrawTexturePro(_game->getTheme()->getBackground(), {0.F, 0.F, -1.F, -1.F}, destination, {0.F, 0.F}, 0.F, WHITE);
 }
 
 void GameScreen::renderField()
 {
-    const auto tileSize = static_cast<float>(_game->getCurrentTheme()->getTileSize());
+    const auto tileSize = static_cast<float>(_game->getTheme()->getTileSize());
 
     BeginMode2D(_camera);
     {
@@ -248,53 +195,54 @@ void GameScreen::renderGUI()
         renderCenteredText("You Win!", GREEN);
     }
 
-    if (_gameState != GameState::Playing)
-    {
-        if (GuiButton({20 + GUI_BUTTON_SIZE, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#60#")) // NOLINT
-        {
-            _game->changeScreen(
-                std::make_unique<GameScreen>(_game, _field.getWidth(), _field.getHeight(), _field.getBombCount()));
-        }
-    }
-
-    renderQuitDialog();
+    renderAndHandleRetryButton();
+    renderAndHandleQuitDialog();
 }
 
 void GameScreen::renderCenteredText(const char* text, const Color& color) const
 {
-    auto [x, y] = MeasureTextEx(_font, text, FONT_SIZE_BIG, 1.F);
+    auto [x, y] = MeasureTextEx(_game->getTheme()->getFont(), text, FONT_SIZE_BIG, 1.F);
     const Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - x / 2, static_cast<float>(GetScreenHeight()) - 2 * y};
 
-    DrawTextEx(_font, text, pos, FONT_SIZE_BIG, 1.F, color);
+    DrawTextEx(_game->getTheme()->getFont(), text, pos, FONT_SIZE_BIG, 1.F, color);
 }
 
-void GameScreen::renderQuitDialog()
+void GameScreen::renderAndHandleQuitDialog()
 {
-    if (GuiButton({10, 10, GUI_BUTTON_SIZE, GUI_BUTTON_SIZE}, "#56#") != 0) // NOLINT
+    if (GuiButton({GUI::WINDOW_PADDING, GUI::WINDOW_PADDING, GUI_BUTTON_WIDTH, GUI_BUTTON_HEIGHT}, "Back") != 0)
     {
         _quitDialog = true;
     }
     if (_quitDialog)
     {
-        GuiSetIconScale(1); // Needed so info icon won't render outside of the dialog window
         const Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - GUI_QUIT_DIALOG_WIDTH / 2,
                           static_cast<float>(GetScreenHeight()) / 2 - GUI_QUIT_DIALOG_HEIGHT / 2};
 
-        const int result = GuiMessageBox({pos.x, pos.y, GUI_QUIT_DIALOG_WIDTH, GUI_QUIT_DIALOG_HEIGHT}, "#191#",
-                                         "Are you sure you want to return to the main menu?", "Cancel;Yes");
-        GuiSetIconScale(2);
-
-        switch (result)
+        switch (GuiMessageBox({pos.x, pos.y, GUI_QUIT_DIALOG_WIDTH, GUI_QUIT_DIALOG_HEIGHT}, "#191#",
+                              "Are you sure you want to return to the main menu?", "Cancel;Yes"))
         {
         case 0:
         case 1:
             _quitDialog = false;
             break;
         case 2:
-            _game->changeScreen(std::make_unique<MainMenuScreen>(_game));
-            return;
+            _game->setScreen(std::make_unique<MainMenuScreen>(_game));
         default:
             break;
+        }
+    }
+}
+
+void GameScreen::renderAndHandleRetryButton()
+{
+    if (_gameState != GameState::Playing)
+    {
+        if (GuiButton({GUI::WINDOW_PADDING, GUI::WINDOW_PADDING + GUI::ITEM_SPACING + GUI_BUTTON_HEIGHT,
+                       GUI_BUTTON_WIDTH, GUI_BUTTON_HEIGHT},
+                      "Retry") != 0)
+        {
+            _game->setScreen(
+                std::make_unique<GameScreen>(_game, _field.getWidth(), _field.getHeight(), _field.getBombCount()));
         }
     }
 }
@@ -422,7 +370,7 @@ auto GameScreen::tileButton(const Rectangle& source, const Rectangle& destinatio
         }
     }
 
-    DrawTexturePro(_sheet, source, destination, {0.F, 0.F}, 0.F, WHITE);
+    DrawTexturePro(_game->getTheme()->getSpriteSheet(), source, destination, {0.F, 0.F}, 0.F, WHITE);
     return button;
 }
 

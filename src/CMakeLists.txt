@@ -26,6 +26,8 @@
 
 set(
         WS_SOURCE_FILES
+        app/wyrmsweeper.h
+        app/wyrmsweeper.cpp
         assets/classic_theme/font.h
         assets/classic_theme/sprite_sheet.h
         components/mine_field.h
@@ -33,6 +35,7 @@ set(
         components/screen.h
         components/screen.cpp
         components/theme.h
+        gui/layout_constants.h
         screens/game_screen.h
         screens/game_screen.cpp
         screens/main_menu_screen.h
@@ -40,9 +43,9 @@ set(
         themes/classic_theme.h
         themes/classic_theme.cpp
         thirdparties/raygui.cpp
+        thirdparties/raylib_utils.h
+        thirdparties/raylib_utils.cpp
         main.cpp
-        wyrmsweeper.h
-        wyrmsweeper.cpp
 )
 
 if (WIN32)
