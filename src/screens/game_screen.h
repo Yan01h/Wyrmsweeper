@@ -57,6 +57,8 @@ private:
     void renderTile(int row, int column, float tileSize);
     void renderGUI();
     void renderCenteredText(const char* text, const Color& color) const;
+    void renderTime() const;
+    void renderBombCount() const;
 
     // GUI
     void renderAndHandleQuitDialog();
@@ -77,7 +79,9 @@ private:
     GameState _gameState;
     int       _bombCount;
     int       _normalTileCount;
+    float     _time;
     bool      _quitDialog;
+    bool      _firstTouch;
 
     // Rendering properties
     float    _renderTileSize;

@@ -25,6 +25,7 @@
 #include "game_screen.h"
 
 #include <algorithm>
+#include <chrono>
 #include <raygui.h>
 #include <raymath.h>
 
@@ -32,25 +33,26 @@
 #include "gui/layout_constants.h"
 #include "screens/main_menu_screen.h"
 
-namespace {
 constexpr float ZOOM_MULTIPLIER    = 0.1F;
 constexpr float MINIMUM_ZOOM_LEVEL = 0.1F;
 
-constexpr float FONT_SIZE_BIG = 48.F;
+constexpr float FONT_SIZE_SMALL = 32.F;
+constexpr float FONT_SIZE_BIG   = 48.F;
 
 constexpr float GUI_BUTTON_WIDTH       = 100.F;
 constexpr float GUI_BUTTON_HEIGHT      = 50.F;
 constexpr float GUI_QUIT_DIALOG_WIDTH  = 500.F;
 constexpr float GUI_QUIT_DIALOG_HEIGHT = 150.F;
-} // namespace
 
 GameScreen::GameScreen(Wyrmsweeper* game, const int width, const int height, const int mineCount)
     : Screen(game)
     , _gameState(GameState::Playing)
     , _bombCount(mineCount)
     , _normalTileCount(width * height - mineCount)
+    , _time()
     , _quitDialog(false)
-    , _renderTileSize(0.F)
+    , _firstTouch(false)
+    , _renderTileSize()
     , _renderFieldSize()
     , _camera()
     , _field(width, height, mineCount)
@@ -66,6 +68,11 @@ void GameScreen::update()
     if (!_quitDialog)
     {
         updateCamera();
+    }
+
+    if (_gameState == GameState::Playing && _firstTouch)
+    {
+        _time += GetFrameTime();
     }
 }
 
@@ -175,9 +182,11 @@ void GameScreen::renderTile(const int row, const int column, const float tileSiz
     switch (tileButton(source, destination))
     {
     case MOUSE_BUTTON_LEFT:
+        _firstTouch = true;
         handleTileLeftClick(tile, row, column);
         break;
     case MOUSE_BUTTON_RIGHT:
+        _firstTouch = true;
         handleTileRightClick(tile);
         break;
     default:
@@ -195,8 +204,11 @@ void GameScreen::renderGUI()
         renderCenteredText("You Win!", GREEN);
     }
 
+    renderTime();
+    renderBombCount();
+
     renderAndHandleRetryButton();
-    renderAndHandleQuitDialog();
+    renderAndHandleQuitDialog(); // This line has to be last
 }
 
 void GameScreen::renderCenteredText(const char* text, const Color& color) const
@@ -205,6 +217,29 @@ void GameScreen::renderCenteredText(const char* text, const Color& color) const
     const Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - x / 2, static_cast<float>(GetScreenHeight()) - 2 * y};
 
     DrawTextEx(_game->getTheme()->getFont(), text, pos, FONT_SIZE_BIG, 1.F, color);
+}
+
+void GameScreen::renderTime() const
+{
+    const float mins = _time / 60.F;
+    const char* text =
+        TextFormat("%i:%i", static_cast<int>(mins), static_cast<int>(_time) - static_cast<int>(mins) * 60);
+
+    const auto [x, y] = MeasureTextEx(_game->getTheme()->getFont(), text, FONT_SIZE_SMALL, 1.F);
+    DrawTextEx(_game->getTheme()->getFont(), text,
+               {static_cast<float>(GetScreenWidth()) - x - GUI::WINDOW_PADDING, GUI::WINDOW_PADDING}, FONT_SIZE_SMALL,
+               1.F, RED);
+}
+
+void GameScreen::renderBombCount() const
+{
+    const char* text = TextFormat("%i", _bombCount);
+
+    const auto [x, y] = MeasureTextEx(_game->getTheme()->getFont(), text, FONT_SIZE_SMALL, 1.F);
+    DrawTextEx(
+        _game->getTheme()->getFont(), text,
+        {static_cast<float>(GetScreenWidth()) - x - GUI::WINDOW_PADDING, GUI::WINDOW_PADDING + GUI::ITEM_SPACING + y},
+        FONT_SIZE_SMALL, 1.F, RED);
 }
 
 void GameScreen::renderAndHandleQuitDialog()
@@ -320,13 +355,21 @@ void GameScreen::doChordClick(const int row, const int column)
     }
 }
 
-void GameScreen::handleTileRightClick(Tile& tile) // NOLINT
+void GameScreen::handleTileRightClick(Tile& tile)
 {
     if (tile.state == TileState::Open)
     {
         return;
     }
-    tile.state = tile.state == TileState::Closed ? TileState::Flagged : TileState::Closed;
+    if (tile.state == TileState::Closed)
+    {
+        tile.state = TileState::Flagged;
+        _bombCount--;
+    } else
+    {
+        tile.state = TileState::Closed;
+        _bombCount++;
+    }
 }
 
 void GameScreen::openEmtpyTilesRecursive(const int row, const int column) // NOLINT
