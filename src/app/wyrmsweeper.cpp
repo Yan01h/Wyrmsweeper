@@ -63,6 +63,11 @@ void Wyrmsweeper::run()
         _currentScreen->render();
 
         EndDrawing();
+
+        if (_nextScreen)
+        {
+            _currentScreen = std::move(_nextScreen);
+        }
     }
 
     /*    Cleanup raylib    */
@@ -72,12 +77,12 @@ void Wyrmsweeper::run()
 void Wyrmsweeper::setScreen(std::unique_ptr<Screen> newScreen)
 {
     TraceLog(LOG_INFO, "Changing screen...");
-    assert(newScreen.get() != nullptr);
-    _currentScreen = std::move(newScreen);
+    assert(newScreen);
+    _nextScreen = std::move(newScreen);
 }
 
 auto Wyrmsweeper::getTheme() const -> ITheme*
 {
-    assert(_currentTheme.get() != nullptr);
+    assert(_currentTheme);
     return _currentTheme.get();
 }

@@ -104,3 +104,8 @@ void ClassicTheme::createAndLoadBackground()
 
     _background = RaylibUtils::loadTextureFromMemory(width, height, BACKGROUND_DATA);
 }
+
+auto ClassicTheme::getFontColor() const -> const Color
+{
+    return DARKBROWN;
+}

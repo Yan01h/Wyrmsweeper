@@ -42,6 +42,8 @@ public:
     [[nodiscard]] auto getTheme() const -> ITheme*;
 private:
     std::unique_ptr<Screen> _currentScreen;
+    std::unique_ptr<Screen> _nextScreen;
+
     std::unique_ptr<ITheme> _currentTheme;
 };
 

@@ -204,31 +204,37 @@ void GameScreen::renderGUI()
         renderCenteredText("You Win!", GREEN);
     }
 
+    renderAndHandleRetryButton();
+    renderAndHandleQuitDialog();
+
     renderTime();
     renderBombCount();
-
-    renderAndHandleRetryButton();
-    renderAndHandleQuitDialog(); // This line has to be last
 }
 
 void GameScreen::renderCenteredText(const char* text, const Color& color) const
 {
-    auto [x, y] = MeasureTextEx(_game->getTheme()->getFont(), text, FONT_SIZE_BIG, 1.F);
-    const Vector2 pos{static_cast<float>(GetScreenWidth()) / 2 - x / 2, static_cast<float>(GetScreenHeight()) - 2 * y};
+    auto [textWidth, textHeight] = MeasureTextEx(_game->getTheme()->getFont(), text, FONT_SIZE_BIG, 1.F);
 
-    DrawTextEx(_game->getTheme()->getFont(), text, pos, FONT_SIZE_BIG, 1.F, color);
+    const auto    screenWidth  = static_cast<float>(GetScreenWidth());
+    const auto    screenHeight = static_cast<float>(GetScreenHeight());
+    const Vector2 position{screenWidth / 2 - textWidth / 2, screenHeight - 2 * textHeight};
+
+    DrawTextEx(_game->getTheme()->getFont(), text, position, FONT_SIZE_BIG, 1.F, color);
 }
 
 void GameScreen::renderTime() const
 {
-    const float mins = _time / 60.F;
-    const char* text =
-        TextFormat("%i:%i", static_cast<int>(mins), static_cast<int>(_time) - static_cast<int>(mins) * 60);
+    const int totalSeconds = static_cast<int>(_time);
+    const int minutes      = totalSeconds / 60;
+    const int seconds      = totalSeconds % 60;
+
+    const char* text = TextFormat("%02d:%02d", minutes, seconds);
 
     const auto [x, y] = MeasureTextEx(_game->getTheme()->getFont(), text, FONT_SIZE_SMALL, 1.F);
+
     DrawTextEx(_game->getTheme()->getFont(), text,
                {static_cast<float>(GetScreenWidth()) - x - GUI::WINDOW_PADDING, GUI::WINDOW_PADDING}, FONT_SIZE_SMALL,
-               1.F, RED);
+               1.F, _game->getTheme()->getFontColor());
 }
 
 void GameScreen::renderBombCount() const
@@ -236,10 +242,12 @@ void GameScreen::renderBombCount() const
     const char* text = TextFormat("%i", _bombCount);
 
     const auto [x, y] = MeasureTextEx(_game->getTheme()->getFont(), text, FONT_SIZE_SMALL, 1.F);
-    DrawTextEx(
-        _game->getTheme()->getFont(), text,
-        {static_cast<float>(GetScreenWidth()) - x - GUI::WINDOW_PADDING, GUI::WINDOW_PADDING + GUI::ITEM_SPACING + y},
-        FONT_SIZE_SMALL, 1.F, RED);
+
+    const float posX = static_cast<float>(GetScreenWidth()) - x - GUI::WINDOW_PADDING;
+    const float posY = GUI::WINDOW_PADDING + GUI::ITEM_SPACING + y;
+
+    DrawTextEx(_game->getTheme()->getFont(), text, {posX, posY}, FONT_SIZE_SMALL, 1.F,
+               _game->getTheme()->getFontColor());
 }
 
 void GameScreen::renderAndHandleQuitDialog()

@@ -38,6 +38,8 @@ public:
     [[nodiscard]] auto getSpriteSheet() const -> const Texture2D& override;
     [[nodiscard]] auto getBackground() const -> const Texture2D& override;
     [[nodiscard]] auto getFont() const -> const Font& override;
+
+    [[nodiscard]] auto getFontColor() const -> const Color override;
 private:
     void loadAssets();
     void unloadAssets() const;

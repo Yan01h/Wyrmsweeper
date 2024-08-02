@@ -39,6 +39,9 @@ public:
     [[nodiscard]] virtual auto getSpriteSheet() const -> const Texture2D& = 0;
     [[nodiscard]] virtual auto getBackground() const -> const Texture2D&  = 0;
     [[nodiscard]] virtual auto getFont() const -> const Font&             = 0;
+
+    // Colors
+    [[nodiscard]] virtual auto getFontColor() const -> const Color = 0;
 };
 
 #endif
