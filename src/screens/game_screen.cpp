@@ -432,7 +432,7 @@ void GameScreen::explode()
     {
         for (int column = 0; column < _field.getWidth(); column++)
         {
-            if (auto& [number, state] = _field.getTile(row, column); number == BOMB_NUM)
+            if (auto& [number, state] = _field.getTile(row, column); number == BOMB_NUM && state != TileState::Flagged)
             {
                 state = TileState::Open;
             }
