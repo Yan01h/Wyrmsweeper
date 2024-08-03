@@ -33,7 +33,11 @@ auto main(int /*argc*/, char** /*argv*/) -> int
 
 #if defined(WS_PLATFORM_WINDOWS) && !defined(WS_DEBUG_BUILD)
 #    define WIN32_LEAN_AND_MEAN
+#    define NOGDI
+#    define NOUSER
 #    include <windows.h>
+#    undef near
+#    undef far
 
 int WINAPI WinMain(_In_ HINSTANCE /*hInstance*/, _In_opt_ HINSTANCE /*hPrevInstance*/, _In_ LPSTR /*lpCmdLine*/,
                    _In_ int /*nShowCmd*/)
