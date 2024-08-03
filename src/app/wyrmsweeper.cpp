@@ -27,7 +27,7 @@
 #include <cassert>
 #include <raylib.h>
 
-#include "screens/game_screen.h" // Temporary
+#include "screens/main_menu_screen.h"
 #include "themes/classic_theme.h"
 
 constexpr int DEFAULT_SCREEN_WIDHT  = 1280;
@@ -48,12 +48,11 @@ void Wyrmsweeper::run()
     SetExitKey(KEY_NULL);
 
     /*    Init game    */
-    _currentTheme = std::make_unique<ClassicTheme>();
-    //_currentScreen = std::make_unique<GameScreen>(this, 30, 16, 99); // NOLINT
-    _currentScreen = std::make_unique<GameScreen>(this, 10, 10, 10); // NOLINT
+    _currentTheme  = std::make_unique<ClassicTheme>();
+    _currentScreen = std::make_unique<MainMenuScreen>(this);
 
     /*    Main loop    */
-    while (!WindowShouldClose())
+    while (!WindowShouldClose() && _running)
     {
         _currentScreen->update();
 
@@ -72,6 +71,11 @@ void Wyrmsweeper::run()
 
     /*    Cleanup raylib    */
     CloseWindow();
+}
+
+void Wyrmsweeper::quit()
+{
+    _running = false;
 }
 
 void Wyrmsweeper::setScreen(std::unique_ptr<Screen> newScreen)

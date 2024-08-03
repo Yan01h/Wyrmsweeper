@@ -36,11 +36,14 @@ public:
     Wyrmsweeper() = default;
 
     void run();
+    void quit();
 
     void setScreen(std::unique_ptr<Screen> newScreen);
 
     [[nodiscard]] auto getTheme() const -> ITheme*;
 private:
+    bool _running = true;
+
     std::unique_ptr<Screen> _currentScreen;
     std::unique_ptr<Screen> _nextScreen;
 

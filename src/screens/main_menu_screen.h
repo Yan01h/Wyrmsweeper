@@ -25,15 +25,34 @@
 #ifndef WS_SCREENS_MAIN_MENU_SCREEN_H
 #define WS_SCREENS_MAIN_MENU_SCREEN_H
 
+#include <cstdint>
+
 #include "components/screen.h"
 
 class MainMenuScreen final : public Screen
 {
+    enum class MenuState : uint8_t
+    {
+        Title = 0,
+        Difficulty,
+    };
 public:
     explicit MainMenuScreen(Wyrmsweeper* game);
 
     void update() override;
     void render() override;
+private:
+    // Render state functions
+    void renderTitleState();
+    void renderDifficultyState();
+
+    void renderBackground() const;
+
+    // GUI helper functions
+    static auto centeredButton(const char* text, float posY) -> bool;
+private:
+    // State
+    MenuState _menuState;
 };
 
 #endif

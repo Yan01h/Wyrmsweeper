@@ -33,6 +33,8 @@
 
 static constexpr int GUI_FONT_SIZE = 16;
 
+static constexpr Color GUI_FONT_COLOR = {50, 106, 66, 255};
+
 static constexpr unsigned int BACKGROUND_DATA[] = {0xffc0c0c0};
 
 ClassicTheme::ClassicTheme()
@@ -107,5 +109,5 @@ void ClassicTheme::createAndLoadBackground()
 
 auto ClassicTheme::getFontColor() const -> const Color
 {
-    return DARKBROWN;
+    return GUI_FONT_COLOR;
 }
