@@ -68,8 +68,9 @@ private:
     void handleTileLeftClick(const Tile& tile, int row, int column);
     void doSingleTileClick(int row, int column);
     void doChordClick(int row, int column);
-    void handleTileRightClick(Tile& tile);
+    void handleTileRightClick(int row, int column);
     void openEmtpyTilesRecursive(int row, int column);
+    void doAutoChord(int row, int column);
     void explode();
 
     // Helper functions

@@ -41,8 +41,10 @@ public:
     void setScreen(std::unique_ptr<Screen> newScreen);
 
     [[nodiscard]] auto getTheme() const -> ITheme*;
+    [[nodiscard]] auto getAutoChordSetting() -> bool&;
 private:
-    bool _running = true;
+    bool _running   = true;
+    bool _autoChord = false;
 
     std::unique_ptr<Screen> _currentScreen;
     std::unique_ptr<Screen> _nextScreen;

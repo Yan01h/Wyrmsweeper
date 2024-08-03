@@ -90,3 +90,8 @@ auto Wyrmsweeper::getTheme() const -> ITheme*
     assert(_currentTheme);
     return _currentTheme.get();
 }
+
+auto Wyrmsweeper::getAutoChordSetting() -> bool&
+{
+    return _autoChord;
+}

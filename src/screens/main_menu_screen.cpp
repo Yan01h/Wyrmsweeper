@@ -33,6 +33,7 @@
 
 constexpr float FONT_SIZE_TITLE = 72.F;
 
+constexpr float   GUI_CHECKBOX_SIZE = 30.F;
 constexpr Vector2 GUI_BUTTON_SIZE{150.F, 60.F};
 
 constexpr int FIELD_EASY_WIDTH      = 9;
@@ -92,6 +93,12 @@ void MainMenuScreen::renderTitleState()
     {
         _game->quit();
     }
+
+    // Auto chording checkbox
+    const float checkPosY = static_cast<float>(GetScreenHeight()) - GUI_CHECKBOX_SIZE - GUI::WINDOW_PADDING;
+
+    GuiCheckBox({GUI::WINDOW_PADDING, checkPosY, GUI_CHECKBOX_SIZE, GUI_CHECKBOX_SIZE}, "Auto Chording",
+                &_game->getAutoChordSetting());
 }
 
 void MainMenuScreen::renderDifficultyState()

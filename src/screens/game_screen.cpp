@@ -154,7 +154,7 @@ void GameScreen::renderField()
 
 void GameScreen::renderTile(const int row, const int column, const float tileSize)
 {
-    Tile& tile = _field.getTile(row, column);
+    const Tile& tile = _field.getTile(row, column);
 
     Rectangle source{0.F, 0.F, 0.F, 0.F};
     switch (tile.state)
@@ -187,7 +187,7 @@ void GameScreen::renderTile(const int row, const int column, const float tileSiz
         break;
     case MOUSE_BUTTON_RIGHT:
         _firstTouch = true;
-        handleTileRightClick(tile);
+        handleTileRightClick(row, column);
         break;
     default:
         break;
@@ -319,6 +319,10 @@ void GameScreen::doSingleTileClick(const int row, const int column)
             _normalTileCount--;
         }
         state = TileState::Open;
+        if (_game->getAutoChordSetting())
+        {
+            doChordClick(row, column);
+        }
     }
 
     if (number == BOMB_NUM)
@@ -363,20 +367,26 @@ void GameScreen::doChordClick(const int row, const int column)
     }
 }
 
-void GameScreen::handleTileRightClick(Tile& tile)
+void GameScreen::handleTileRightClick(const int row, const int column)
 {
-    if (tile.state == TileState::Open)
+    auto& [number, state] = _field.getTile(row, column);
+    if (state == TileState::Open)
     {
         return;
     }
-    if (tile.state == TileState::Closed)
+    if (state == TileState::Closed)
     {
-        tile.state = TileState::Flagged;
+        state = TileState::Flagged;
         _bombCount--;
     } else
     {
-        tile.state = TileState::Closed;
+        state = TileState::Closed;
         _bombCount++;
+    }
+
+    if (_game->getAutoChordSetting())
+    {
+        doAutoChord(row, column);
     }
 }
 
@@ -423,6 +433,22 @@ auto GameScreen::tileButton(const Rectangle& source, const Rectangle& destinatio
 
     DrawTexturePro(_game->getTheme()->getSpriteSheet(), source, destination, {0.F, 0.F}, 0.F, WHITE);
     return button;
+}
+
+void GameScreen::doAutoChord(const int row, const int column)
+{
+    for (int blockRow = std::max(row - 1, 0); blockRow <= std::min(row + 1, _field.getHeight() - 1); blockRow++)
+    {
+        for (int blockColumn = std::max(column - 1, 0); blockColumn <= std::min(column + 1, _field.getWidth() - 1);
+             blockColumn++)
+        {
+            if (const auto [number, state] = _field.getTile(blockRow, blockColumn);
+                state == TileState::Open && number != 0)
+            {
+                doChordClick(blockRow, blockColumn);
+            }
+        }
+    }
 }
 
 void GameScreen::explode()
