@@ -36,6 +36,9 @@ constexpr float FONT_SIZE_TITLE = 72.F;
 constexpr float   GUI_CHECKBOX_SIZE = 30.F;
 constexpr Vector2 GUI_BUTTON_SIZE{150.F, 60.F};
 
+constexpr int GUI_MIN_SPINNER_VAL = 1;
+constexpr int GUI_MAX_SPINNER_VAL = 999;
+
 constexpr int FIELD_EASY_WIDTH      = 9;
 constexpr int FIELD_EASY_HEIGHT     = 9;
 constexpr int FIELD_EASY_BOMB_COUNT = 10;
@@ -48,9 +51,14 @@ constexpr int FIELD_HARD_WIDTH      = 30;
 constexpr int FIELD_HARD_HEIGHT     = 16;
 constexpr int FIELD_HARD_BOMB_COUNT = 99;
 
+constexpr int CUSTOM_DEFAULT_VALUE = 10;
+
 MainMenuScreen::MainMenuScreen(Wyrmsweeper* game)
     : Screen(game)
     , _menuState(MenuState::Title)
+    , _customWidth(CUSTOM_DEFAULT_VALUE)
+    , _customHeight(CUSTOM_DEFAULT_VALUE)
+    , _customBombCount(CUSTOM_DEFAULT_VALUE)
 {}
 
 void MainMenuScreen::update() {}
@@ -66,6 +74,9 @@ void MainMenuScreen::render()
         break;
     case MenuState::Difficulty:
         renderDifficultyState();
+        break;
+    case MenuState::Custom:
+        renderCustomState();
         break;
     }
 }
@@ -104,7 +115,7 @@ void MainMenuScreen::renderTitleState()
 void MainMenuScreen::renderDifficultyState()
 {
     // Difficulty buttons
-    constexpr float buttonCount = 3;
+    constexpr float buttonCount = 4;
 
     constexpr float buttonsHeight = buttonCount * GUI_BUTTON_SIZE.y + (buttonCount - 1) * GUI::ITEM_SPACING;
     const float     buttonY       = static_cast<float>(GetScreenHeight()) / 2.F - buttonsHeight / 2.F;
@@ -124,6 +135,59 @@ void MainMenuScreen::renderDifficultyState()
         _game->setScreen(
             std::make_unique<GameScreen>(_game, FIELD_HARD_WIDTH, FIELD_HARD_HEIGHT, FIELD_HARD_BOMB_COUNT));
     }
+    if (centeredButton("Custom", buttonY + 3 * GUI_BUTTON_SIZE.y + 3 * GUI::ITEM_SPACING))
+    {
+        _menuState = MenuState::Custom;
+    }
+
+    // Back button
+    if (GuiButton({GUI::WINDOW_PADDING, GUI::WINDOW_PADDING, GUI_BUTTON_SIZE.x, GUI_BUTTON_SIZE.y}, "Back") != 0)
+    {
+        _menuState = MenuState::Title;
+    }
+}
+
+void MainMenuScreen::renderCustomState()
+{
+    // Field properties spinner
+    constexpr float widgetCount  = 4;
+    constexpr float widgetHeight = widgetCount * GUI_BUTTON_SIZE.y + (widgetCount - 1) * GUI::ITEM_SPACING;
+
+    const float widgetY = static_cast<float>(GetScreenHeight()) / 2.F - widgetHeight / 2.F;
+
+    static bool widthEditMode = false;
+    if (centeredSpinner("Width", widgetY, &_customWidth, widthEditMode) != 0)
+    {
+        widthEditMode = !widthEditMode;
+    }
+    static bool heightEditMode = false;
+    if (centeredSpinner("Height", widgetY + GUI_BUTTON_SIZE.y + GUI::ITEM_SPACING, &_customHeight, heightEditMode) != 0)
+    {
+        heightEditMode = !heightEditMode;
+    }
+    static bool bombEditMode = false;
+    if (centeredSpinner("Bombs", widgetY + 2 * GUI_BUTTON_SIZE.y + 2 * GUI::ITEM_SPACING, &_customBombCount,
+                        bombEditMode) != 0)
+    {
+        bombEditMode = !bombEditMode;
+    }
+
+    // Play button
+    if (centeredButton("Play", widgetY + 3 * GUI_BUTTON_SIZE.y + 3 * GUI::ITEM_SPACING) && checkCustomValues())
+    {
+        _game->setScreen(std::make_unique<GameScreen>(_game, _customWidth, _customHeight, _customBombCount));
+    }
+
+    // Error text
+    if (!checkCustomValues())
+    {
+        const float posY = widgetY + 4 * GUI_BUTTON_SIZE.y + 4 * GUI::ITEM_SPACING;
+
+        const int textCol = GuiGetStyle(LABEL, TEXT_COLOR_NORMAL);
+        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, 0xFF0000FF);
+        GuiLabel({0.F, posY, static_cast<float>(GetScreenWidth()), GUI_BUTTON_SIZE.y}, "Field not possible!");
+        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, textCol);
+    }
 
     // Back button
     if (GuiButton({GUI::WINDOW_PADDING, GUI::WINDOW_PADDING, GUI_BUTTON_SIZE.x, GUI_BUTTON_SIZE.y}, "Back") != 0)
@@ -141,9 +205,22 @@ void MainMenuScreen::renderBackground() const
     DrawTexturePro(_game->getTheme()->getBackground(), {0.F, 0.F, -1.F, -1.F}, destination, {0.F, 0.F}, 0.F, WHITE);
 }
 
+auto MainMenuScreen::checkCustomValues() const -> bool
+{
+    return _customBombCount < _customWidth * _customHeight;
+}
+
 auto MainMenuScreen::centeredButton(const char* text, const float posY) -> bool
 {
     const float posX = static_cast<float>(GetScreenWidth()) / 2.F - GUI_BUTTON_SIZE.x / 2.F;
 
     return GuiButton({posX, posY, GUI_BUTTON_SIZE.x, GUI_BUTTON_SIZE.y}, text) != 0;
+}
+
+auto MainMenuScreen::centeredSpinner(const char* text, const float posY, int* val, const bool editMode) -> int
+{
+    const float posX = static_cast<float>(GetScreenWidth()) / 2.F - GUI_BUTTON_SIZE.x / 2.F;
+
+    return GuiSpinner({posX, posY, GUI_BUTTON_SIZE.x, GUI_BUTTON_SIZE.y}, text, val, GUI_MIN_SPINNER_VAL,
+                      GUI_MAX_SPINNER_VAL, editMode);
 }

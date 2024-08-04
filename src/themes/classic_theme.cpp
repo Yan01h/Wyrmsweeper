@@ -43,10 +43,7 @@ ClassicTheme::ClassicTheme()
     , _font()
 {
     loadAssets();
-
-    GuiSetFont(_font);
-    GuiSetStyle(DEFAULT, TEXT_SIZE, GUI_FONT_SIZE);
-    GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
+    setGuiStyle();
 
     TraceLog(LOG_INFO, "Classic theme loaded!");
 }
@@ -80,6 +77,11 @@ auto ClassicTheme::getFont() const -> const Font&
     return _font;
 }
 
+auto ClassicTheme::getFontColor() const -> const Color
+{
+    return GUI_FONT_COLOR;
+}
+
 void ClassicTheme::loadAssets()
 {
     _spriteSheet = RaylibUtils::loadTextureFromMemory(Assets::Classic::SHEET_WIDTH, Assets::Classic::SHEET_HEIGHT,
@@ -107,7 +109,11 @@ void ClassicTheme::createAndLoadBackground()
     _background = RaylibUtils::loadTextureFromMemory(width, height, BACKGROUND_DATA);
 }
 
-auto ClassicTheme::getFontColor() const -> const Color
+void ClassicTheme::setGuiStyle() const
 {
-    return GUI_FONT_COLOR;
+    GuiSetFont(_font);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, GUI_FONT_SIZE);
+    GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
+
+    GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
 }

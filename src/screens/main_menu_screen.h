@@ -35,6 +35,7 @@ class MainMenuScreen final : public Screen
     {
         Title = 0,
         Difficulty,
+        Custom
     };
 public:
     explicit MainMenuScreen(Wyrmsweeper* game);
@@ -45,14 +46,22 @@ private:
     // Render state functions
     void renderTitleState();
     void renderDifficultyState();
+    void renderCustomState();
 
     void renderBackground() const;
 
+    // State functions
+    auto checkCustomValues() const -> bool;
+
     // GUI helper functions
     static auto centeredButton(const char* text, float posY) -> bool;
+    static auto centeredSpinner(const char* text, float posY, int* val, bool editMode) -> int;
 private:
     // State
     MenuState _menuState;
+    int       _customWidth;
+    int       _customHeight;
+    int       _customBombCount;
 };
 
 #endif

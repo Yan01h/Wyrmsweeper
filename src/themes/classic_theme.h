@@ -45,6 +45,8 @@ private:
     void unloadAssets() const;
 
     void createAndLoadBackground();
+
+    void setGuiStyle() const;
 private:
     Texture2D _spriteSheet;
     Texture2D _background;
