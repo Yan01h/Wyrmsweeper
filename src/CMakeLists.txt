@@ -49,7 +49,7 @@ set(
 )
 
 if (WIN32)
-    set(WS_SOURCE_FILES ${WS_SOURCE_FILES} win32_resource.rc)
+    set(WS_SOURCE_FILES ${WS_SOURCE_FILES} win32/resource.rc)
 endif ()
 
 ######################
