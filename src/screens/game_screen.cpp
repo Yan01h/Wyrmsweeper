@@ -70,6 +70,11 @@ void GameScreen::update()
         updateCamera();
     }
 
+    if (IsKeyPressed(KEY_ESCAPE))
+    {
+        _quitDialog = !_quitDialog;
+    }
+
     if (_gameState == GameState::Playing && _firstTouch)
     {
         _time += GetFrameTime();
